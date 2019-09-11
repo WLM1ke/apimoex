@@ -22,8 +22,7 @@ jobs:
       run: |
         pytest tests -v --cov=apimoex --cov-report=term-missing --cov-report=xml --setup-show
     - name: Test coverage
-      env: 
-        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      run: |
-        pip install codecov
-        codecov
+      uses: codecov/codecov-action@v1.0.2
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+
