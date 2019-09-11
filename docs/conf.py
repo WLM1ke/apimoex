@@ -50,7 +50,7 @@ html_theme_options = {
     "travis_button": False,
     "badges": [
         {
-            "image": "https://github.com/WLM1ke/apimoex/workflows/apimoex%20tests/badge.svg",
+            "image": "https://github.com/WLM1ke/apimoex/workflows/tests/badge.svg",
             "target": "https://github.com/WLM1ke/apimoex/actions",
             "height": "20",
             "alt": "Tests status",

@@ -1,6 +1,6 @@
 MOEX ISS API
 ====================
-.. image:: https://github.com/WLM1ke/apimoex/workflows/apimoex%20tests/badge.svg
+.. image:: https://github.com/WLM1ke/apimoex/workflows/tests/badge.svg
     :target: https://github.com/WLM1ke/apimoex/actions
 .. image:: https://codecov.io/gh/WLM1ke/apimoex/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/WLM1ke/apimoex
