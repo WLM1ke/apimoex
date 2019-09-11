@@ -8,4 +8,4 @@ from .client import ISSClient
 
 from .requests import *
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"

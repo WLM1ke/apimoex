@@ -1,4 +1,4 @@
-name: apimoex tests
+name: tests
 
 on: push
 

@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>Начало работы &#8212; документация apimoex 1.0.1</title>
+    <link rel="stylesheet" href="_static/aiohttp.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Справочник API" href="api.html" />
+    <link rel="prev" title="MOEX ISS API" href="index.html" />
+ 
+<link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+
+<link rel="canonical" href="https://wlm1ke.github.io/apimoexgetting_started.html"/>
+
+<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+<link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet">
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>Начало работы<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h1>
+<div class="section" id="id2">
+<h2>Установка<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h2>
+<div class="highlight-Bash notranslate"><div class="highlight"><pre><span></span>$ pip install aiomoex
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>Пример использования реализованных запросов<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h2>
+<p>История котировок SNGSP в режиме TQBR:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">import</span> <span class="nn">apimoex</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">apimoex</span><span class="o">.</span><span class="n">get_board_history</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;SNGSP&#39;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;TRADEDATE&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">(),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>           BOARDID  CLOSE    VOLUME         VALUE
+TRADEDATE
+2014-06-09    TQBR  27.48  12674200  3.484352e+08
+2014-06-10    TQBR  27.55  14035900  3.856417e+08
+2014-06-11    TQBR  28.15  27208800  7.602146e+08
+2014-06-16    TQBR  28.27  68059900  1.913160e+09
+2014-06-17    TQBR  28.20  22101600  6.292844e+08
+
+           BOARDID   CLOSE     VOLUME         VALUE
+TRADEDATE
+2019-09-04    TQBR  38.060  243010500  9.348435e+09
+2019-09-05    TQBR  36.140  129366600  4.704949e+09
+2019-09-06    TQBR  35.475   62389000  2.201887e+09
+2019-09-09    TQBR  34.570   54331300  1.905837e+09
+2019-09-10    TQBR  35.250   45966000  1.605849e+09
+
+&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+Index: 1326 entries, 2014-06-09 to 2019-09-10
+Data columns (total 4 columns):
+BOARDID    1326 non-null object
+CLOSE      1326 non-null float64
+VOLUME     1326 non-null int64
+VALUE      1326 non-null float64
+dtypes: float64(2), int64(1), object(1)
+memory usage: 51.8+ KB
+</pre></div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>Пример реализации запроса с помощью клиента<a class="headerlink" href="#id4" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Перечень акций, торгующихся в режиме TQBR (<a class="reference external" href="https://iss.moex.com/iss/reference/32">описание запроса</a>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="kn">import</span> <span class="nn">apimoex</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="n">request_url</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;https://iss.moex.com/iss/engines/stock/&#39;</span>
+               <span class="s1">&#39;markets/shares/boards/TQBR/securities.json&#39;</span><span class="p">)</span>
+<span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;securities.columns&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;SECID,&#39;</span>
+                                    <span class="s1">&#39;REGNUMBER,&#39;</span>
+                                    <span class="s1">&#39;LOTSIZE,&#39;</span>
+                                    <span class="s1">&#39;SHORTNAME&#39;</span><span class="p">)}</span>
+<span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
+    <span class="n">iss</span> <span class="o">=</span> <span class="n">apimoex</span><span class="o">.</span><span class="n">ISSClient</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">request_url</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">iss</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;securities&#39;</span><span class="p">])</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;SECID&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">(),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>          REGNUMBER  LOTSIZE   SHORTNAME
+SECID
+ABRD   1-02-12500-A       10  АбрауДюрсо
+AFKS   1-05-01669-A      100  Система ао
+AFLT   1-01-00010-A       10    Аэрофлот
+AGRO           None        1    AGRO-гдр
+AKRN   1-03-00207-A        1       Акрон
+
+          REGNUMBER  LOTSIZE   SHORTNAME
+SECID
+YNDX           None        1  Yandex clA
+YRSB   1-01-50099-A       10     ТНСэнЯр
+YRSBP  2-01-50099-A       10   ТНСэнЯр-п
+ZILL   1-02-00036-A        1      ЗИЛ ао
+ZVEZ   1-01-00169-D     1000   ЗВЕЗДА ао
+
+&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+Index: 264 entries, ABRD to ZVEZ
+Data columns (total 3 columns):
+REGNUMBER    255 non-null object
+LOTSIZE      264 non-null int64
+SHORTNAME    264 non-null object
+dtypes: int64(1), object(2)
+memory usage: 8.2+ KB
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">apimoex</a></h1>
+
+
+
+<p class="blurb">MOEX ISS API</p>
+
+
+
+
+
+
+
+
+
+
+
+<ul class="badges">
+  
+  <li><a href="https://github.com/WLM1ke/apimoex/actions">
+    <img src="https://github.com/WLM1ke/apimoex/workflows/apimoex%20tests/badge.svg"
+	 alt="Tests status"
+	 height="20"
+    />
+  </a>
+  
+  <li><a href="https://codecov.io/gh/WLM1ke/apimoex">
+    <img src="https://codecov.io/gh/WLM1ke/apimoex/branch/master/graph/badge.svg"
+	 alt="Code coverage status"
+	 height="20"
+    />
+  </a>
+  
+  <li><a href="https://badge.fury.io/py/apimoex">
+    <img src="https://badge.fury.io/py/apimoex.svg"
+	 alt="Latest PyPI package version"
+	 height="20"
+    />
+  </a>
+  
+</ul>
+<h3>Навигация</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Начало работы</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Установка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Пример использования реализованных запросов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Пример реализации запроса с помощью клиента</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Справочник API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id1">Функции-запросы</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#id2">Справочная информация</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#id3">Исторические данные по свечкам</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#id4">Исторические данные по дневным котировкам</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id5">Реализация произвольного запроса</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="change_log.html">Список изменений</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id2">1.0.1 (2019-09-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id3">1.0.0 (2019-09-11)</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Mikhail Korotkov aka WLMike.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      
+      |
+      <a href="_sources/getting_started.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/WLM1ke/apimoex" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

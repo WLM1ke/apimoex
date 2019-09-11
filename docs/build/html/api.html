@@ -1,0 +1,452 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>Справочник API &#8212; документация apimoex 1.0.1</title>
+    <link rel="stylesheet" href="_static/aiohttp.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Список изменений" href="change_log.html" />
+    <link rel="prev" title="Начало работы" href="getting_started.html" />
+ 
+<link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+
+<link rel="canonical" href="https://wlm1ke.github.io/apimoexapi.html"/>
+
+<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+<link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet">
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="api">
+<h1>Справочник API<a class="headerlink" href="#api" title="Ссылка на этот заголовок">¶</a></h1>
+<div class="section" id="id1">
+<h2>Функции-запросы<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h2>
+<div class="section" id="id2">
+<h3>Справочная информация<a class="headerlink" href="#id2" title="Ссылка на этот заголовок">¶</a></h3>
+<p>Функции из данного раздела носят вспомогательный характер и нужны для получения данных для построения остальных
+запросов.</p>
+<dl class="function">
+<dt id="apimoex.get_reference">
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_reference</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">placeholder: str = 'boards'</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.get_reference" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Получить перечень доступных значений плейсхолдера в адресе запроса.</p>
+<p>Например в описание запроса <a class="reference external" href="https://iss.moex.com/iss/reference/32">https://iss.moex.com/iss/reference/32</a> присутствует следующий адрес
+/iss/engines/[engine]/markets/[market]/boards/[board]/securities с плейсхолдерами engines, markets и boards.</p>
+<p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/28">https://iss.moex.com/iss/reference/28</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – Сессия интернет соединения.</p></li>
+<li><p><strong>placeholder</strong> – Наименование плейсхолдера в адресе запроса: engines, markets, boards, boardgroups, durations, securitytypes,
+securitygroups, securitycollections</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Список словарей, которые напрямую конвертируется в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="apimoex.find_securities">
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">find_securities</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">string: str</em>, <em class="sig-param">columns: Optional[Tuple[str</em>, <em class="sig-param">...]] = ('secid'</em>, <em class="sig-param">'regnumber')</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.find_securities" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Найти инструменты по части Кода, Названию, ISIN, Идентификатору Эмитента, Номеру гос.регистрации.</p>
+<p>Один из вариантов использования - по регистрационному номеру узнать предыдущие тикеры эмитента, и с помощью
+нескольких запросов об истории котировок собрать длинную историю с использованием всех предыдущих тикеров.</p>
+<p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/5">https://iss.moex.com/iss/reference/5</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – Сессия интернет соединения.</p></li>
+<li><p><strong>string</strong> – Часть Кода, Названия, ISIN, Идентификатора Эмитента, Номера гос.регистрации.</p></li>
+<li><p><strong>columns</strong> – Кортеж столбцов, которые нужно загрузить - по умолчанию тикер и номер государственно регистрации.
+Если пустой или None, то загружаются все столбцы.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Список словарей, которые напрямую конвертируется в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="id3">
+<h3>Исторические данные по свечкам<a class="headerlink" href="#id3" title="Ссылка на этот заголовок">¶</a></h3>
+<p>MOEX ISS формирует свечки в формате HLOCV, при этом используются следующие условные числовые коды:</p>
+<ul class="simple">
+<li><p>1 - 1 минута</p></li>
+<li><p>10 - 10 минут</p></li>
+<li><p>60 - 1 час</p></li>
+<li><p>24 - 1 день</p></li>
+<li><p>7 - 1 неделя</p></li>
+<li><p>31 - 1 месяц</p></li>
+<li><p>4 - 1 квартал</p></li>
+</ul>
+<p>Для разных свечек и инструментов доступна информация за разные интервалы дат, уточнить которые можно с помощью функции
+get_market_candle_borders() или get_board_candle_borders(), а получить исторические значения свечек с помощью
+get_market_candles() или get_board_candles(), используя числовой код размера свечки.</p>
+<dl class="function">
+<dt id="apimoex.get_market_candle_borders">
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_market_candle_borders</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">security: str</em>, <em class="sig-param">market: str = 'shares'</em>, <em class="sig-param">engine: str = 'stock'</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.get_market_candle_borders" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Получить таблицу интервалов доступных дат для свечей различного размера на рынке для всех режимов торгов.</p>
+<p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/156">https://iss.moex.com/iss/reference/156</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – Сессия интернет соединения.</p></li>
+<li><p><strong>security</strong> – Тикер ценной бумаги.</p></li>
+<li><p><strong>market</strong> – Рынок - по умолчанию акции.</p></li>
+<li><p><strong>engine</strong> – Движок - по умолчанию акции.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Список словарей, которые напрямую конвертируется в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="apimoex.get_board_candle_borders">
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_board_candle_borders</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">security: str</em>, <em class="sig-param">board: str = 'TQBR'</em>, <em class="sig-param">market: str = 'shares'</em>, <em class="sig-param">engine: str = 'stock'</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.get_board_candle_borders" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Получить таблицу интервалов доступных дат для свечей различного размера в указанном режиме торгов.</p>
+<p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/48">https://iss.moex.com/iss/reference/48</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – Сессия интернет соединения.</p></li>
+<li><p><strong>security</strong> – Тикер ценной бумаги.</p></li>
+<li><p><strong>board</strong> – Режим торгов - по умолчанию основной режим торгов T+2.</p></li>
+<li><p><strong>market</strong> – Рынок - по умолчанию акции.</p></li>
+<li><p><strong>engine</strong> – Движок - по умолчанию акции.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Список словарей, которые напрямую конвертируется в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="apimoex.get_market_candles">
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_market_candles</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">security: str</em>, <em class="sig-param">interval: int = 24</em>, <em class="sig-param">start: Optional[str] = None</em>, <em class="sig-param">end: Optional[str] = None</em>, <em class="sig-param">market: str = 'shares'</em>, <em class="sig-param">engine: str = 'stock'</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.get_market_candles" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Получить свечи в формате HLOCV указанного инструмента на рынке для основного режима торгов за интервал дат.</p>
+<p>Если торговля идет в нескольких основных режимах, то на один интервал времени может быть выдано несколько свечек -
+по свечке на каждый режим. Предположительно такая ситуация может произойти для свечек длиннее 1 дня в периоды, когда
+менялся режим торгов.</p>
+<p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/155">https://iss.moex.com/iss/reference/155</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – Сессия интернет соединения.</p></li>
+<li><p><strong>security</strong> – Тикер ценной бумаги.</p></li>
+<li><p><strong>interval</strong> – Размер свечки - целое число 1 (1 минута), 10 (10 минут), 60 (1 час), 24 (1 день), 7 (1 неделя), 31 (1 месяц) или
+4 (1 квартал). По умолчанию дневные данные.</p></li>
+<li><p><strong>start</strong> – Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены с начала истории.</p></li>
+<li><p><strong>end</strong> – Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены до конца истории. Для текущего дня будут
+загружены не окончательные данные, если торги продолжаются.</p></li>
+<li><p><strong>market</strong> – Рынок - по умолчанию акции.</p></li>
+<li><p><strong>engine</strong> – Движок - по умолчанию акции.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Список словарей, которые напрямую конвертируется в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="apimoex.get_board_candles">
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_board_candles</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">security: str</em>, <em class="sig-param">interval: int = 24</em>, <em class="sig-param">start: Optional[str] = None</em>, <em class="sig-param">end: Optional[str] = None</em>, <em class="sig-param">board: str = 'TQBR'</em>, <em class="sig-param">market: str = 'shares'</em>, <em class="sig-param">engine: str = 'stock'</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.get_board_candles" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Получить свечи в формате HLOCV указанного инструмента в указанном режиме торгов за интервал дат.</p>
+<p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/46">https://iss.moex.com/iss/reference/46</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – Сессия интернет соединения.</p></li>
+<li><p><strong>security</strong> – Тикер ценной бумаги.</p></li>
+<li><p><strong>interval</strong> – Размер свечки - целое число 1 (1 минута), 10 (10 минут), 60 (1 час), 24 (1 день), 7 (1 неделя), 31 (1 месяц) или
+4 (1 квартал). По умолчанию дневные данные.</p></li>
+<li><p><strong>start</strong> – Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены с начала истории.</p></li>
+<li><p><strong>end</strong> – Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены до конца истории. Для текущего дня будут
+загружены не окончательные данные, если торги продолжаются.</p></li>
+<li><p><strong>board</strong> – Режим торгов - по умолчанию основной режим торгов T+2.</p></li>
+<li><p><strong>market</strong> – Рынок - по умолчанию акции.</p></li>
+<li><p><strong>engine</strong> – Движок - по умолчанию акции.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Список словарей, которые напрямую конвертируется в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="id4">
+<h3>Исторические данные по дневным котировкам<a class="headerlink" href="#id4" title="Ссылка на этот заголовок">¶</a></h3>
+<p>В отличие от свечек, функции данного раздела предоставляют много вспомогательной информации и имеют более глубокую историю.
+Функция get_board_dates() позволяет проверить для каких дат имеются исторические котировки.
+Функция get_board_securities() позволяет получить данные о размере лотов и прочей информации по всем торгуемым бумагам в
+конкретном режиме торгов. Функции get_market_history() и get_board_history() позволяют запросить исторические дневные
+котировки с различной вспомогательной информацией для конкретной бумаги для всех режимов торгов рынка или для
+конкретного режима торгов, соответственно.</p>
+<dl class="function">
+<dt id="apimoex.get_board_dates">
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_board_dates</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">board: str = 'TQBR'</em>, <em class="sig-param">market: str = 'shares'</em>, <em class="sig-param">engine: str = 'stock'</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.get_board_dates" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Получить интервал дат, доступных в истории для рынка по заданному режиму торгов.</p>
+<p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/26">https://iss.moex.com/iss/reference/26</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – Сессия интернет соединения.</p></li>
+<li><p><strong>board</strong> – Режим торгов - по умолчанию основной режим торгов T+2.</p></li>
+<li><p><strong>market</strong> – Рынок - по умолчанию акции.</p></li>
+<li><p><strong>engine</strong> – Движок - по умолчанию акции.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Список из одного элемента - словаря с ключами „from“ и „till“.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="apimoex.get_board_securities">
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_board_securities</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">table: str = 'securities'</em>, <em class="sig-param">columns: Optional[Tuple[str]] = ('SECID'</em>, <em class="sig-param">'REGNUMBER'</em>, <em class="sig-param">'LOTSIZE'</em>, <em class="sig-param">'SHORTNAME')</em>, <em class="sig-param">board: str = 'TQBR'</em>, <em class="sig-param">market: str = 'shares'</em>, <em class="sig-param">engine: str = 'stock'</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.get_board_securities" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Получить таблицу инструментов по режиму торгов со вспомогательной информацией.</p>
+<p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/32">https://iss.moex.com/iss/reference/32</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – Сессия интернет соединения.</p></li>
+<li><p><strong>table</strong> – Таблица с данными, которую нужно вернуть: securities - справочник торгуемых ценных бумаг, marketdata -
+данные с результатами торгов текущего дня.</p></li>
+<li><p><strong>columns</strong> – Кортеж столбцов, которые нужно загрузить - по умолчанию тикер, номер государственно регистрации,
+размер лота и краткое название. Если пустой или None, то загружаются все столбцы.</p></li>
+<li><p><strong>board</strong> – Режим торгов - по умолчанию основной режим торгов T+2.</p></li>
+<li><p><strong>market</strong> – Рынок - по умолчанию акции.</p></li>
+<li><p><strong>engine</strong> – Движок - по умолчанию акции.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Список словарей, которые напрямую конвертируется в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="apimoex.get_market_history">
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_market_history</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">security: str</em>, <em class="sig-param">start: Optional[str] = None</em>, <em class="sig-param">end: Optional[str] = None</em>, <em class="sig-param">columns: Optional[Tuple[str</em>, <em class="sig-param">...]] = ('BOARDID'</em>, <em class="sig-param">'TRADEDATE'</em>, <em class="sig-param">'CLOSE'</em>, <em class="sig-param">'VOLUME'</em>, <em class="sig-param">'VALUE')</em>, <em class="sig-param">market: str = 'shares'</em>, <em class="sig-param">engine: str = 'stock'</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.get_market_history" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Получить историю по одной бумаге на рынке для всех режимов торгов за интервал дат.</p>
+<p>На одну дату может приходиться несколько значений, если торги шли в нескольких режимах.</p>
+<p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/63">https://iss.moex.com/iss/reference/63</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – Сессия интернет соединения.</p></li>
+<li><p><strong>security</strong> – Тикер ценной бумаги.</p></li>
+<li><p><strong>start</strong> – Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены с начала истории.</p></li>
+<li><p><strong>end</strong> – Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены до конца истории.</p></li>
+<li><p><strong>columns</strong> – Кортеж столбцов, которые нужно загрузить - по умолчанию режим торгов, дата торгов, цена закрытия и объем в
+штуках и стоимости. Если пустой или None, то загружаются все столбцы.</p></li>
+<li><p><strong>market</strong> – Рынок - по умолчанию акции.</p></li>
+<li><p><strong>engine</strong> – Движок - по умолчанию акции.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Список словарей, которые напрямую конвертируется в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="apimoex.get_board_history">
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_board_history</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">security: str</em>, <em class="sig-param">start: Optional[str] = None</em>, <em class="sig-param">end: Optional[str] = None</em>, <em class="sig-param">columns: Optional[Tuple[str</em>, <em class="sig-param">...]] = ('BOARDID'</em>, <em class="sig-param">'TRADEDATE'</em>, <em class="sig-param">'CLOSE'</em>, <em class="sig-param">'VOLUME'</em>, <em class="sig-param">'VALUE')</em>, <em class="sig-param">board: str = 'TQBR'</em>, <em class="sig-param">market: str = 'shares'</em>, <em class="sig-param">engine: str = 'stock'</em><span class="sig-paren">)</span><a class="headerlink" href="#apimoex.get_board_history" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Получить историю торгов для указанной бумаги в указанном режиме торгов за указанный интервал дат.</p>
+<p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/65">https://iss.moex.com/iss/reference/65</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>session</strong> – Сессия интернет соединения.</p></li>
+<li><p><strong>security</strong> – Тикер ценной бумаги.</p></li>
+<li><p><strong>start</strong> – Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены с начала истории.</p></li>
+<li><p><strong>end</strong> – Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены до конца истории.</p></li>
+<li><p><strong>columns</strong> – Кортеж столбцов, которые нужно загрузить - по умолчанию режим торгов, дата торгов, цена закрытия и объем в
+штуках и стоимости. Если пустой или None, то загружаются все столбцы.</p></li>
+<li><p><strong>board</strong> – Режим торгов - по умолчанию основной режим торгов T+2.</p></li>
+<li><p><strong>market</strong> – Рынок - по умолчанию акции.</p></li>
+<li><p><strong>engine</strong> – Движок - по умолчанию акции.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Список словарей, которые напрямую конвертируется в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="id5">
+<h2>Реализация произвольного запроса<a class="headerlink" href="#id5" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Для осуществления запроса необходимо начать сессию соединений с MOEX ISS и передать клиенту корректный url и
+дополнительные параметры:</p>
+<ul class="simple">
+<li><p>Полный перечень возможных <a class="reference external" href="https://iss.moex.com/iss/reference/">запросов</a> к MOEX ISS</p></li>
+<li><p>Официальное <a class="reference external" href="https://fs.moex.com/files/6523">Руководство разработчика</a> с дополнительной информацией</p></li>
+</ul>
+<dl class="class">
+<dt id="apimoex.ISSClient">
+<em class="property">class </em><code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">ISSClient</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">url: str</em>, <em class="sig-param">query: dict = None</em><span class="sig-paren">)</span><a class="headerlink" href="#apimoex.ISSClient" title="Ссылка на это определение">¶</a></dt>
+<dd><blockquote>
+<div><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">collections.abc.Iterable</span></code></p>
+</div></blockquote>
+<p>Клиент для MOEX ISS.</p>
+<p>Для работы клиента необходимо передать requests.Session.</p>
+<p>Загружает данные для простых ответов с помощью метода get. Для ответов состоящих из нескольких блоков данных
+поддерживается протокол итерируемого для отдельных блоков или метод get_all для их автоматического сбора.</p>
+<dl class="method">
+<dt id="apimoex.ISSClient.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">start: Optional[int] = None</em><span class="sig-paren">)</span> &#x2192; Dict[str, List[Dict[str, Union[str, int, float]]]]<a class="headerlink" href="#apimoex.ISSClient.get" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Загрузка данных.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Параметры</dt>
+<dd class="field-odd"><p><strong>start</strong> – Номер элемента с которого нужно загрузить данные. Используется для дозагрузки данных, состоящих из
+нескольких блоков. При отсутствии данные загружаются с начального элемента.</p>
+</dd>
+<dt class="field-even">Результат</dt>
+<dd class="field-even"><p>Блок данных с отброшенной вспомогательной информацией - словарь, каждый ключ которого
+соответствует одной из таблиц с данными. Таблицы являются списками словарей, которые напрямую конвертируются
+в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="apimoex.ISSClient.get_all">
+<code class="sig-name descname">get_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; Dict[str, List[Dict[str, Union[str, int, float]]]]<a class="headerlink" href="#apimoex.ISSClient.get_all" title="Ссылка на это определение">¶</a></dt>
+<dd><p>Собирает все блоки данных для запросов, ответы на которые выдаются по частям отдельными блоками.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Результат</dt>
+<dd class="field-odd"><p>Объединенные из всех блоков данные с отброшенной вспомогательной информацией - словарь, каждый ключ которого
+соответствует одной из таблиц с данными. Таблицы являются списками словарей, которые напрямую конвертируются
+в pandas.DataFrame.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">apimoex</a></h1>
+
+
+
+<p class="blurb">MOEX ISS API</p>
+
+
+
+
+
+
+
+
+
+
+
+<ul class="badges">
+  
+  <li><a href="https://github.com/WLM1ke/apimoex/actions">
+    <img src="https://github.com/WLM1ke/apimoex/workflows/apimoex%20tests/badge.svg"
+	 alt="Tests status"
+	 height="20"
+    />
+  </a>
+  
+  <li><a href="https://codecov.io/gh/WLM1ke/apimoex">
+    <img src="https://codecov.io/gh/WLM1ke/apimoex/branch/master/graph/badge.svg"
+	 alt="Code coverage status"
+	 height="20"
+    />
+  </a>
+  
+  <li><a href="https://badge.fury.io/py/apimoex">
+    <img src="https://badge.fury.io/py/apimoex.svg"
+	 alt="Latest PyPI package version"
+	 height="20"
+    />
+  </a>
+  
+</ul>
+<h3>Навигация</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Начало работы</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#id2">Установка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#id3">Пример использования реализованных запросов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#id4">Пример реализации запроса с помощью клиента</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Справочник API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Функции-запросы</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Справочная информация</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Исторические данные по свечкам</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Исторические данные по дневным котировкам</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">Реализация произвольного запроса</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="change_log.html">Список изменений</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id2">1.0.1 (2019-09-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id3">1.0.0 (2019-09-11)</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Mikhail Korotkov aka WLMike.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      
+      |
+      <a href="_sources/api.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/WLM1ke/apimoex" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>

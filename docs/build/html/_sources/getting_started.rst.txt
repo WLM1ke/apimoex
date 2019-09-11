@@ -1,30 +1,3 @@
-MOEX ISS API
-====================
-.. image:: https://github.com/WLM1ke/apimoex/workflows/apimoex%20tests/badge.svg
-    :target: https://github.com/WLM1ke/apimoex/actions
-.. image:: https://codecov.io/gh/WLM1ke/apimoex/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/WLM1ke/apimoex
-.. image:: https://badge.fury.io/py/apimoex.svg
-    :target: https://badge.fury.io/py/apimoex
-
-Реализация части  запросов к `MOEX Informational & Statistical Server <https://www.moex.com/a2193>`_.
-
-Документация
-------------
-https://wlm1ke.github.io/apimoex/
-
-Основные возможности
---------------------
-Реализовано несколько функций-запросов информации о торгуемых акциях и их исторических котировках, результаты которых
-напрямую конвертируются в pandas.DataFrame.
-
-Работа функций базируется на универсальном клиенте, позволяющем осуществлять произвольные запросы к MOEX ISS, поэтому
-перечень доступных функций-запросов может быть легко расширен. При необходимости добавления функций воспользуйтесь
-`Issues <https://github.com/WLM1ke/apimoex/issues>`_ на GitHub с указанием ссылки на описание запроса:
-
-* Полный перечень возможных `запросов <https://iss.moex.com/iss/reference/>`_ к MOEX ISS
-* Официальное `Руководство разработчика <https://fs.moex.com/files/6523>`_ с дополнительной информацией
-
 Начало работы
 =============
 Установка
@@ -32,7 +5,7 @@ https://wlm1ke.github.io/apimoex/
 
 .. code-block:: Bash
 
-   $ pip install apimoex
+   $ pip install aiomoex
 
 Пример использования реализованных запросов
 -------------------------------------------
@@ -52,7 +25,7 @@ https://wlm1ke.github.io/apimoex/
        print(df.tail(), '\n')
        df.info()
 
-.. code-block::
+.. code-block:: default
 
                BOARDID  CLOSE    VOLUME         VALUE
     TRADEDATE
@@ -105,7 +78,7 @@ https://wlm1ke.github.io/apimoex/
        print(df.tail(), '\n')
        df.info()
 
-.. code-block::
+.. code-block:: default
 
               REGNUMBER  LOTSIZE   SHORTNAME
     SECID

@@ -1,0 +1,176 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <title>MOEX ISS API &#8212; документация apimoex 1.0.1</title>
+    <link rel="stylesheet" href="_static/aiohttp.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="Начало работы" href="getting_started.html" />
+ 
+<link rel="stylesheet" href="_static/custom.css" type="text/css" />
+
+
+<link rel="canonical" href="https://wlm1ke.github.io/apimoexindex.html"/>
+
+<meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+<link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet">
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="moex-iss-api">
+<h1>MOEX ISS API<a class="headerlink" href="#moex-iss-api" title="Ссылка на этот заголовок">¶</a></h1>
+<p>Реализация части  запросов к <a class="reference external" href="https://www.moex.com/a2193">MOEX Informational &amp; Statistical Server</a>.</p>
+<div class="section" id="id1">
+<h2>Основные возможности<a class="headerlink" href="#id1" title="Ссылка на этот заголовок">¶</a></h2>
+<p>Реализовано несколько функций-запросов информации о торгуемых акциях и их исторических котировках, результаты которых
+напрямую конвертируются в pandas.DataFrame.</p>
+<p>Работа функций базируется на универсальном клиенте, позволяющем осуществлять произвольные запросы к MOEX ISS, поэтому
+перечень доступных функций-запросов может быть легко расширен. При необходимости добавления функций воспользуйтесь
+<a class="reference external" href="https://github.com/WLM1ke/aiomoex/issues">Issues</a> на GitHub с указанием ссылки на описание запроса:</p>
+<ul class="simple">
+<li><p>Полный перечень возможных <a class="reference external" href="https://iss.moex.com/iss/reference/">запросов</a> к MOEX ISS</p></li>
+<li><p>Официальное <a class="reference external" href="https://fs.moex.com/files/6523">Руководство разработчика</a> с дополнительной информацией</p></li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h2>Оглавление<a class="headerlink" href="#id4" title="Ссылка на этот заголовок">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Начало работы</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#id2">Установка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#id3">Пример использования реализованных запросов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#id4">Пример реализации запроса с помощью клиента</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Справочник API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id1">Функции-запросы</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#id2">Справочная информация</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#id3">Исторические данные по свечкам</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#id4">Исторические данные по дневным котировкам</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id5">Реализация произвольного запроса</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="change_log.html">Список изменений</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id2">1.0.1 (2019-09-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id3">1.0.0 (2019-09-11)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">apimoex</a></h1>
+
+
+
+<p class="blurb">MOEX ISS API</p>
+
+
+
+
+
+
+
+
+
+
+
+<ul class="badges">
+  
+  <li><a href="https://github.com/WLM1ke/apimoex/actions">
+    <img src="https://github.com/WLM1ke/apimoex/workflows/apimoex%20tests/badge.svg"
+	 alt="Tests status"
+	 height="20"
+    />
+  </a>
+  
+  <li><a href="https://codecov.io/gh/WLM1ke/apimoex">
+    <img src="https://codecov.io/gh/WLM1ke/apimoex/branch/master/graph/badge.svg"
+	 alt="Code coverage status"
+	 height="20"
+    />
+  </a>
+  
+  <li><a href="https://badge.fury.io/py/apimoex">
+    <img src="https://badge.fury.io/py/apimoex.svg"
+	 alt="Latest PyPI package version"
+	 height="20"
+    />
+  </a>
+  
+</ul>
+<h3>Навигация</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Начало работы</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#id2">Установка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#id3">Пример использования реализованных запросов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#id4">Пример реализации запроса с помощью клиента</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">Справочник API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id1">Функции-запросы</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#id2">Справочная информация</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#id3">Исторические данные по свечкам</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#id4">Исторические данные по дневным котировкам</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id5">Реализация произвольного запроса</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="change_log.html">Список изменений</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id2">1.0.1 (2019-09-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id3">1.0.0 (2019-09-11)</a></li>
+</ul>
+</li>
+</ul>
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, Mikhail Korotkov aka WLMike.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.2.0</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+    <a href="https://github.com/WLM1ke/apimoex" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
+    
+
+    
+  </body>
+</html>
