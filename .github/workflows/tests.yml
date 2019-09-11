@@ -5,7 +5,7 @@ on: push
 jobs:
   tests:
     name: Tests
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout apimoex
@@ -21,7 +21,7 @@ jobs:
     - name: Test with pytest
       run: |
         pytest tests -v --cov=apimoex --cov-report=term-missing --cov-report=xml --setup-show
-    - name: Test coverage
+    - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1.0.2
       with:
         token: ${{secrets.CODECOV_TOKEN}}
