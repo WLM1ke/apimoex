@@ -20,8 +20,8 @@ jobs:
         pip install -r requirements.txt
     - name: Test with pytest
       run: |
-        pytest tests -v --cov=aiomoex --cov-report=term-missing --cov-report=xml --setup-show
+        pytest tests -v --cov=apimoex --cov-report=term-missing --cov-report=xml --setup-show
     - name: Test coverage
       run: |
-        - pip install codecov
+        pip install codecov
         codecov
