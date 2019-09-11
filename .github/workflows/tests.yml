@@ -1,0 +1,27 @@
+name: apimoex tests
+
+on: [push]
+
+jobs:
+  build:
+    name: Tests
+    runs-on: macOS-latest
+
+    steps:
+    - name: Checkout apimoex
+      uses: actions/checkout@v1
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.7
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Test with pytest
+      run: |
+        pytest tests -v --cov=aiomoex --cov-report=term-missing --cov-report=xml --setup-show
+    - name: Test coverage
+      run: |
+        - pip install codecov
+        codecov
