@@ -1,9 +1,9 @@
 name: apimoex tests
 
-on: [push]
+on: push
 
 jobs:
-  build:
+  tests:
     name: Tests
     runs-on: macOS-latest
 
@@ -22,6 +22,8 @@ jobs:
       run: |
         pytest tests -v --cov=apimoex --cov-report=term-missing --cov-report=xml --setup-show
     - name: Test coverage
+      env: 
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
       run: |
         pip install codecov
         codecov
