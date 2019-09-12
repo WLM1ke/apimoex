@@ -355,7 +355,7 @@ def get_board_dates(
 def get_board_securities(
     session: requests.Session,
     table: str = "securities",
-    columns: Optional[Tuple[str]] = ("SECID", "REGNUMBER", "LOTSIZE", "SHORTNAME"),
+    columns: Optional[Tuple[str, ...]] = ("SECID", "REGNUMBER", "LOTSIZE", "SHORTNAME"),
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",

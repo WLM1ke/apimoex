@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ru">
   <head>
     <meta charset="utf-8" />
-    <title>Справочник API &#8212; документация apimoex 1.0.1</title>
+    <title>Справочник API &#8212; документация apimoex 1.0.2</title>
     <link rel="stylesheet" href="_static/aiohttp.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -227,7 +227,7 @@ get_market_candles() или get_board_candles(), используя числов
 
 <dl class="function">
 <dt id="apimoex.get_board_securities">
-<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_board_securities</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">table: str = 'securities'</em>, <em class="sig-param">columns: Optional[Tuple[str]] = ('SECID'</em>, <em class="sig-param">'REGNUMBER'</em>, <em class="sig-param">'LOTSIZE'</em>, <em class="sig-param">'SHORTNAME')</em>, <em class="sig-param">board: str = 'TQBR'</em>, <em class="sig-param">market: str = 'shares'</em>, <em class="sig-param">engine: str = 'stock'</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.get_board_securities" title="Ссылка на это определение">¶</a></dt>
+<code class="sig-prename descclassname">apimoex.</code><code class="sig-name descname">get_board_securities</code><span class="sig-paren">(</span><em class="sig-param">session: requests.sessions.Session</em>, <em class="sig-param">table: str = 'securities'</em>, <em class="sig-param">columns: Optional[Tuple[str</em>, <em class="sig-param">...]] = ('SECID'</em>, <em class="sig-param">'REGNUMBER'</em>, <em class="sig-param">'LOTSIZE'</em>, <em class="sig-param">'SHORTNAME')</em>, <em class="sig-param">board: str = 'TQBR'</em>, <em class="sig-param">market: str = 'shares'</em>, <em class="sig-param">engine: str = 'stock'</em><span class="sig-paren">)</span> &#x2192; List[Dict[str, Union[str, int, float]]]<a class="headerlink" href="#apimoex.get_board_securities" title="Ссылка на это определение">¶</a></dt>
 <dd><p>Получить таблицу инструментов по режиму торгов со вспомогательной информацией.</p>
 <p>Описание запроса - <a class="reference external" href="https://iss.moex.com/iss/reference/32">https://iss.moex.com/iss/reference/32</a></p>
 <dl class="field-list simple">
@@ -419,8 +419,9 @@ get_market_candles() или get_board_candles(), используя числов
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="change_log.html">Список изменений</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id2">1.0.1 (2019-09-11)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id3">1.0.0 (2019-09-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id2">1.0.2 (2019-09-12)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id3">1.0.1 (2019-09-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id4">1.0.0 (2019-09-11)</a></li>
 </ul>
 </li>
 </ul>
