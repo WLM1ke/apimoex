@@ -124,15 +124,13 @@ def test_get_market_candles_from_beginning(session):
     assert isinstance(data, list)
     assert len(data) > 500
     df = pd.DataFrame(data)
-    assert df.columns.size == 8
+    assert df.columns.size == 6
     assert df.loc[0, "open"] == pytest.approx(141.55)
     assert df.loc[1, "close"] == pytest.approx(141.59)
     assert df.loc[2, "high"] == pytest.approx(142.4)
     assert df.loc[3, "low"] == pytest.approx(140.81)
     assert df.loc[4, "value"] == pytest.approx(2_586_296.9)
-    assert df.loc[5, "volume"] == pytest.approx(4140)
     assert df.loc[6, "begin"] == "2011-12-15 10:06:00"
-    assert df.iloc[-1]["end"] == "2011-12-16 18:44:59"
 
 
 def test_get_market_candles_to_end(session):
@@ -140,15 +138,13 @@ def test_get_market_candles_to_end(session):
     assert isinstance(data, list)
     assert len(data) > 47
     df = pd.DataFrame(data)
-    assert df.columns.size == 8
+    assert df.columns.size == 6
     assert df.loc[0, "open"] == pytest.approx(1130)
     assert df.loc[1, "close"] == pytest.approx(970)
     assert df.loc[2, "high"] == pytest.approx(1045)
     assert df.loc[3, "low"] == pytest.approx(429.9)
     assert df.loc[4, "value"] == pytest.approx(1109833660.9)
-    assert df.loc[5, "volume"] == pytest.approx(1363844)
     assert df.loc[6, "begin"] == "2012-07-01 00:00:00"
-    assert df.loc[7, "end"] == "2012-12-31 00:00:00"
 
 
 def test_get_board_candles_from_beginning(session):
@@ -156,15 +152,13 @@ def test_get_board_candles_from_beginning(session):
     assert isinstance(data, list)
     assert len(data) > 500
     df = pd.DataFrame(data)
-    assert df.columns.size == 8
+    assert df.columns.size == 6
     assert df.loc[0, "open"] == pytest.approx(202.7)
     assert df.loc[1, "close"] == pytest.approx(204.12)
     assert df.loc[2, "high"] == pytest.approx(205)
     assert df.loc[3, "low"] == pytest.approx(204.93)
     assert df.loc[4, "value"] == pytest.approx(3_990_683.9)
-    assert df.loc[5, "volume"] == pytest.approx(3000)
     assert df.loc[6, "begin"] == "2011-12-08 11:00:00"
-    assert df.iloc[-1]["end"] == "2011-12-22 18:49:59"
 
 
 def test_get_board_candles_to_end(session):
@@ -172,15 +166,13 @@ def test_get_board_candles_to_end(session):
     assert isinstance(data, list)
     assert len(data) > 52
     df = pd.DataFrame(data)
-    assert df.columns.size == 8
+    assert df.columns.size == 6
     assert df.loc[0, "open"] == pytest.approx(0.152)
     assert df.loc[1, "close"] == pytest.approx(0.15689)
     assert df.loc[2, "high"] == pytest.approx(0.15998)
     assert df.loc[3, "low"] == pytest.approx(0.149)
     assert df.loc[4, "value"] == pytest.approx(2_713_625)
-    assert df.loc[5, "volume"] == pytest.approx(20_180_000)
     assert df.loc[6, "begin"] == "2015-01-01 00:00:00"
-    assert df.loc[51, "end"] == "2018-10-31 00:00:00"
 
 
 def test_get_board_dates(session):

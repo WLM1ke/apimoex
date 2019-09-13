@@ -243,6 +243,14 @@ def get_market_candles(
     interval: int = 24,
     start: Optional[str] = None,
     end: Optional[str] = None,
+    columns: Optional[Tuple[str, ...]] = (
+            "begin",
+            "open",
+            "close",
+            "high",
+            "low",
+            "value",
+    ),
     market: str = "shares",
     engine: str = "stock",
 ) -> List[Dict[str, Union[str, int, float]]]:
@@ -266,6 +274,9 @@ def get_market_candles(
     :param end:
         Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены до конца истории. Для текущего дня будут
         загружены не окончательные данные, если торги продолжаются.
+    :param columns:
+        Кортеж столбцов, которые нужно загрузить - по умолчанию момент начала свечки и HLOCV. Если пустой или None, то
+        загружаются все столбцы.
     :param market:
         Рынок - по умолчанию акции.
     :param engine:
@@ -276,7 +287,7 @@ def get_market_candles(
     """
     url = f"https://iss.moex.com/iss/engines/{engine}/markets/{market}/securities/{security}/candles.json"
     table = "candles"
-    query = _make_query(interval=interval, start=start, end=end)
+    query = _make_query(interval=interval, start=start, end=end, table=table, columns=columns)
     return _get_long_data(session, url, table, query)
 
 
@@ -286,6 +297,14 @@ def get_board_candles(
     interval: int = 24,
     start: Optional[str] = None,
     end: Optional[str] = None,
+    columns: Optional[Tuple[str, ...]] = (
+            "begin",
+            "open",
+            "close",
+            "high",
+            "low",
+            "value",
+    ),
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
@@ -306,6 +325,9 @@ def get_board_candles(
     :param end:
         Дата вида ГГГГ-ММ-ДД. При отсутствии данные будут загружены до конца истории. Для текущего дня будут
         загружены не окончательные данные, если торги продолжаются.
+    :param columns:
+        Кортеж столбцов, которые нужно загрузить - по умолчанию момент начала свечки и HLOCV. Если пустой или None, то
+        загружаются все столбцы.
     :param board:
         Режим торгов - по умолчанию основной режим торгов T+2.
     :param market:
@@ -321,7 +343,7 @@ def get_board_candles(
         f"boards/{board}/securities/{security}/candles.json"
     )
     table = "candles"
-    query = _make_query(interval=interval, start=start, end=end)
+    query = _make_query(interval=interval, start=start, end=end, table=table, columns=columns)
     return _get_long_data(session, url, table, query)
 
 
