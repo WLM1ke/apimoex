@@ -75,9 +75,9 @@ class ISSClient(abc.Iterable):
                 # Наименование ключа может быть любым
                 key = next(iter(data))
                 block_size = len(data[key])
+                yield data
                 if not block_size:
                     return
-                yield data
                 start += block_size
 
     def get(

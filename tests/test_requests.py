@@ -147,6 +147,12 @@ def test_get_market_candles_to_end(session):
     assert df.loc[6, "begin"] == "2012-07-01 00:00:00"
 
 
+def test_get_market_candles_empry_history(session):
+    data = requests.get_market_candles(session, "KSGR", interval=24)
+    assert isinstance(data, list)
+    assert len(data) == 0
+
+
 def test_get_board_candles_from_beginning(session):
     data = requests.get_board_candles(session, "MTSS", interval=10, end="2011-12-22")
     assert isinstance(data, list)
