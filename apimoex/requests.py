@@ -17,6 +17,7 @@ from . import client
 __all__ = [
     "get_reference",
     "find_securities",
+    "find_security_description",
     "get_market_candle_borders",
     "get_board_candle_borders",
     "get_market_candles",
