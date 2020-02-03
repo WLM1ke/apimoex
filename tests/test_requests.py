@@ -1,3 +1,4 @@
+"""Тесты для разнообразных запросов."""
 import pandas as pd
 import pytest
 from requests import Session
@@ -8,6 +9,7 @@ from apimoex import requests
 
 @pytest.fixture(scope="module", name="session")
 def make_session():
+    """Создание http сессии."""
     with Session() as session:
         yield session
 
@@ -79,10 +81,17 @@ check_points = [
 
 
 @pytest.mark.parametrize("reg_number, expected", check_points)
-def test_find_find_securities(session, reg_number, expected):
+def test_find_securities(session, reg_number, expected):
     data = requests.find_securities(session, reg_number)
     assert isinstance(data, list)
     assert expected == {row["secid"] for row in data if row["regnumber"] == reg_number}
+
+
+def test_find_security_description(session):
+    data = requests.find_security_description(session, "IRAO")
+    assert isinstance(data, list)
+    assert len(data) == 17
+    assert data[8] == dict(name="ISSUEDATE", title="Дата начала торгов", value="2009-12-01")
 
 
 def test_get_market_candle_borders(session):
@@ -147,7 +156,7 @@ def test_get_market_candles_to_end(session):
     assert df.loc[6, "begin"] == "2012-07-01 00:00:00"
 
 
-def test_get_market_candles_empry_history(session):
+def test_get_market_candles_empty_history(session):
     data = requests.get_market_candles(session, "KSGR", interval=24)
     assert isinstance(data, list)
     assert len(data) == 0

@@ -169,11 +169,40 @@ def find_securities(
         Кортеж столбцов, которые нужно загрузить - по умолчанию тикер и номер государственно регистрации.
         Если пустой или None, то загружаются все столбцы.
 
-    :return: Список словарей, которые напрямую конвертируется в pandas.DataFrame.
+    :return:
+        Список словарей, которые напрямую конвертируется в pandas.DataFrame.
     """
     url = "https://iss.moex.com/iss/securities.json"
     table = "securities"
     query = _make_query(q=string, table=table, columns=columns)
+    return _get_short_data(session, url, table, query)
+
+
+def find_security_description(
+    session: requests.Session,
+    security: str,
+    columns: Optional[Tuple[str, ...]] = ("name", "title", "value"),
+) -> List[Dict[str, Union[str, int, float]]]:
+    """Получить спецификацию инструмента.
+
+    Один из вариантов использования - по тикеру узнать дату начала торгов.
+
+    Описание запроса - https://iss.moex.com/iss/reference/13
+
+    :param session:
+        Сессия интернет соединения.
+    :param security:
+        Тикер ценной бумаги.
+    :param columns:
+        Кортеж столбцов, которые нужно загрузить - по умолчанию краткое название, длинное название на русском и значение
+        показателя.
+
+    :return:
+        Список словарей, которые напрямую конвертируется в pandas.DataFrame.
+    """
+    url = f"https://iss.moex.com/iss/securities/{security}.json"
+    table = "description"
+    query = _make_query(table=table, columns=columns)
     return _get_short_data(session, url, table, query)
 
 
