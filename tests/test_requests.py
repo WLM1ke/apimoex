@@ -60,7 +60,7 @@ def test_get_table_notable():
 def test_get_reference(session):
     data = requests.get_reference(session, "engines")
     assert isinstance(data, list)
-    assert len(data) == 7
+    assert len(data) == 8
     assert data == [
         {"id": 1, "name": "stock", "title": "Фондовый рынок и рынок депозитов"},
         {"id": 2, "name": "state", "title": "Рынок ГЦБ (размещение)"},
@@ -69,6 +69,7 @@ def test_get_reference(session):
         {"id": 5, "name": "commodity", "title": "Товарный рынок"},
         {"id": 6, "name": "interventions", "title": "Товарные интервенции"},
         {"id": 7, "name": "offboard", "title": "ОТС-система"},
+        {'id': 9, 'name': 'agro', 'title': 'Агро'},
     ]
 
 
@@ -90,7 +91,7 @@ def test_find_securities(session, reg_number, expected):
 def test_find_security_description(session):
     data = requests.find_security_description(session, "IRAO")
     assert isinstance(data, list)
-    assert len(data) == 17
+    assert len(data) == 18
     assert data[8] == dict(name="ISSUEDATE", title="Дата начала торгов", value="2009-12-01")
 
 
@@ -194,7 +195,7 @@ def test_get_board_dates(session):
     data = requests.get_board_dates(session)
     assert isinstance(data, list)
     assert len(data) == 1
-    assert data[0]['from'] == "2013-03-25"
+    assert data[0]['from'] == "1997-03-24"
     assert data[0]['till'] >= "2019-09-10"
 
 
@@ -206,7 +207,7 @@ def test_get_board_securities(session):
     df.set_index("SECID", inplace=True)
     assert df.loc["AKRN", "SHORTNAME"] == "Акрон"
     assert df.loc["GAZP", "REGNUMBER"] == "1-02-00028-A"
-    assert df.loc["TTLK", "LOTSIZE"] == 10000
+    assert df.loc["TTLK", "LOTSIZE"] == 1000
     assert df.loc["MRSB", "SHORTNAME"] == "МордЭнСб"
     assert df.loc["MRSB", "REGNUMBER"] == "1-01-55055-E"
     assert df.loc["MRSB", "LOTSIZE"] == 10000
