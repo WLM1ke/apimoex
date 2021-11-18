@@ -1,5 +1,10 @@
+pre { line-height: 125%; }
+td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
+td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
 .highlight .hll { background-color: #ffffcc }
-.highlight  { background: #424750; color: #f0f0f0; background-color: #424750 }
+.highlight { background: #424750; color: #f0f0f0; background-color: #424750 }
 .highlight .c { color: #808080; font-style: italic; background-color: #424750 } /* Comment */
 .highlight .err { color: #f0f0f0; background-color: #424750 } /* Error */
 .highlight .esc { color: #f0f0f0; background-color: #424750 } /* Escape */

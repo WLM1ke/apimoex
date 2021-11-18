@@ -90,8 +90,9 @@ def test_find_securities(session, reg_number, expected):
 
 def test_find_security_description(session):
     data = requests.find_security_description(session, "IRAO")
+    print(data)
     assert isinstance(data, list)
-    assert len(data) == 18
+    assert len(data) == 21
     assert data[8] == dict(name="ISSUEDATE", title="Дата начала торгов", value="2009-12-01")
 
 
