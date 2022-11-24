@@ -70,7 +70,7 @@ def _make_query(
     if table:
         query["iss.only"] = f"{table},history.cursor"
     if columns:
-        query[f"{table}.columns"] = ",".join(columns)
+        query[f"{table}.columns"] = ",".join(columns) if isinstance(columns, tuple) and len(columns)>1 else str(columns)
     return query
 
 
