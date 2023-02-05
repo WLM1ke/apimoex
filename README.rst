@@ -40,7 +40,7 @@ https://wlm1ke.github.io/apimoex/
 Пример использования реализованных запросов
 -------------------------------------------
 
-История котировок SNGSP в режиме TQBR:
+История котировок `SNGSP в режиме TQBR <https://www.moex.com/ru/issue.aspx?board=TQBR&code=SNGSP>`:
 
 .. code-block:: python
 
@@ -48,7 +48,6 @@ https://wlm1ke.github.io/apimoex/
 
    import apimoex
    import pandas as pd
-
 
    with requests.Session() as session:
        data = apimoex.get_board_history(session, 'SNGSP')
