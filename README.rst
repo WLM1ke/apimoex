@@ -1,5 +1,6 @@
 MOEX ISS API
-====================
+============
+
 .. image:: https://github.com/WLM1ke/apimoex/workflows/tests/badge.svg
     :target: https://github.com/WLM1ke/apimoex/actions
 .. image:: https://codecov.io/gh/WLM1ke/apimoex/branch/master/graph/badge.svg
@@ -7,7 +8,7 @@ MOEX ISS API
 .. image:: https://badge.fury.io/py/apimoex.svg
     :target: https://badge.fury.io/py/apimoex
 
-Реализация части  запросов к `MOEX Informational & Statistical Server <https://www.moex.com/a2193>`_.
+Реализация части запросов к `MOEX Informational & Statistical Server <https://www.moex.com/a2193>`_.
 
 Документация
 ------------
@@ -40,7 +41,7 @@ https://wlm1ke.github.io/apimoex/
 Пример использования реализованных запросов
 -------------------------------------------
 
-История котировок `SNGSP в режиме TQBR <https://www.moex.com/ru/issue.aspx?board=TQBR&code=SNGSP>`:
+История котировок `SNGSP в режиме TQBR <https://www.moex.com/ru/issue.aspx?board=TQBR&code=SNGSP>`_:
 
 .. code-block:: python
 
