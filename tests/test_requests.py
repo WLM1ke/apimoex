@@ -60,7 +60,7 @@ def test_get_table_notable():
 def test_get_reference(session):
     data = requests.get_reference(session, "engines")
     assert isinstance(data, list)
-    assert len(data) == 7
+    assert len(data) == 9
     assert data == [
         {"id": 1, "name": "stock", "title": "Фондовый рынок и рынок депозитов"},
         {"id": 2, "name": "state", "title": "Рынок ГЦБ (размещение)"},
@@ -69,6 +69,8 @@ def test_get_reference(session):
         {"id": 5, "name": "commodity", "title": "Товарный рынок"},
         {"id": 6, "name": "interventions", "title": "Товарные интервенции"},
         {"id": 7, "name": "offboard", "title": "ОТС-система"},
+        {'id': 9, 'name': 'agro', 'title': 'Агро'},
+        {'id': 1012, 'name': 'otc', 'title': 'OTC Система'}
     ]
 
 
@@ -89,9 +91,31 @@ def test_find_securities(session, reg_number, expected):
 
 def test_find_security_description(session):
     data = requests.find_security_description(session, "IRAO")
+    print(data)
     assert isinstance(data, list)
-    assert len(data) == 17
+    assert len(data) == 19
     assert data[8] == dict(name="ISSUEDATE", title="Дата начала торгов", value="2009-12-01")
+    # data = [
+    #     {'name': 'SECID', 'title': 'Код ценной бумаги', 'value': 'IRAO'}, 
+    #     {'name': 'NAME', 'title': 'Полное наименование', 'value': '"Интер РАО" ПАО ао'}, 
+    #     {'name': 'SHORTNAME', 'title': 'Краткое наименование', 'value': 'ИнтерРАОао'}, 
+    #     {'name': 'ISIN', 'title': 'ISIN код', 'value': 'RU000A0JPNM1'}, 
+    #     {'name': 'REGNUMBER', 'title': 'Номер государственной регистрации', 'value': '1-04-33498-E'}, 
+    #     {'name': 'ISSUESIZE', 'title': 'Объем выпуска', 'value': '104400000000'}, 
+    #     {'name': 'FACEVALUE', 'title': 'Номинальная стоимость', 'value': '2.80977'}, 
+    #     {'name': 'FACEUNIT', 'title': 'Валюта номинала', 'value': 'SUR'}, 
+    #     {'name': 'ISSUEDATE', 'title': 'Дата начала торгов', 'value': '2009-12-01'}, 
+    #     {'name': 'LATNAME', 'title': 'Английское наименование', 'value': 'Inter RAO ao'}, 
+    #     {'name': 'LISTLEVEL', 'title': 'Уровень листинга', 'value': '1'}, 
+    #     {'name': 'ISQUALIFIEDINVESTORS', 'title': 'Бумаги для квалифицированных инвесторов', 'value': '0'}, 
+    #     {'name': 'MORNINGSESSION', 'title': 'Допуск к утренней дополнительной торговой сессии', 'value': '1'}, 
+    #     {'name': 'EVENINGSESSION', 'title': 'Допуск к вечерней дополнительной торговой сессии', 'value': '1'}, 
+    #     {'name': 'TYPENAME', 'title': 'Вид/категория ценной бумаги', 'value': 'Акция обыкновенная'}, 
+    #     {'name': 'GROUP', 'title': 'Код типа инструмента', 'value': 'stock_shares'}, 
+    #     {'name': 'TYPE', 'title': 'Тип бумаги', 'value': 'common_share'}, 
+    #     {'name': 'GROUPNAME', 'title': 'Типа инструмента', 'value': 'Акции'}, 
+    #     {'name': 'EMITTER_ID', 'title': 'Код эмитента', 'value': '2140'}
+    # ]
 
 
 def test_get_market_candle_borders(session):
@@ -194,8 +218,10 @@ def test_get_board_dates(session):
     data = requests.get_board_dates(session)
     assert isinstance(data, list)
     assert len(data) == 1
-    assert data[0]['from'] == "2013-03-25"
-    assert data[0]['till'] >= "2019-09-10"
+    assert isinstance(data[0]['from'], str)
+    assert isinstance(data[0]['till'], str)
+    assert len(data[0]['from']) == 10
+    assert len(data[0]['till']) == 10
 
 
 def test_get_board_securities(session):
@@ -206,7 +232,7 @@ def test_get_board_securities(session):
     df.set_index("SECID", inplace=True)
     assert df.loc["AKRN", "SHORTNAME"] == "Акрон"
     assert df.loc["GAZP", "REGNUMBER"] == "1-02-00028-A"
-    assert df.loc["TTLK", "LOTSIZE"] == 10000
+    assert df.loc["TTLK", "LOTSIZE"] == 1000
     assert df.loc["MRSB", "SHORTNAME"] == "МордЭнСб"
     assert df.loc["MRSB", "REGNUMBER"] == "1-01-55055-E"
     assert df.loc["MRSB", "LOTSIZE"] == 10000

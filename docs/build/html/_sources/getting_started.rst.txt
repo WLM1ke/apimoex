@@ -5,7 +5,7 @@
 
 .. code-block:: Bash
 
-   $ pip install aiomoex
+   $ pip install apimoex
 
 Пример использования реализованных запросов
 -------------------------------------------
