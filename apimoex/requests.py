@@ -558,10 +558,12 @@ def get_index_tickers(
 
     Описание запроса - https://iss.moex.com/iss/reference/148
 
+    Список индексов - https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics
+
     :param session:
         Сессия интернет соединения.
     :param index:
-        Название индекса. Например, IMOEX. Список: https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics
+        Название индекса. Например, IMOEX.
     :param date:
         Дата вида ГГГГ-ММ-ДД. Если указано, то будут показаны только активные инструменты, по которым тогда рассчитывалось значение индекса. Если в указанный день не было торгов, то вернёт пустой список! При отсутствии данные будут загружены с начала истории. 
     :param columns:

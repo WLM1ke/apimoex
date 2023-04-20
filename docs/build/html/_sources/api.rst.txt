@@ -15,6 +15,8 @@
 
 .. autofunction:: apimoex.find_security_description
 
+.. autofunction:: apimoex.get_index_tickers
+
 Исторические данные по свечкам
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 MOEX ISS формирует свечки в формате HLOCV, при этом используются следующие условные числовые коды:
