@@ -26,6 +26,7 @@ __all__ = [
     "get_board_securities",
     "get_market_history",
     "get_board_history",
+    "get_index_tickers",
 ]
 
 
@@ -35,6 +36,7 @@ def _make_query(
     interval: Optional[int] = None,
     start: Optional[str] = None,
     end: Optional[str] = None,
+    date: Optional[str] = None,
     table: Optional[str] = None,
     columns: Optional[Tuple[str, ...]] = None,
 ) -> Dict[str, Union[str, int]]:
@@ -50,6 +52,8 @@ def _make_query(
         Начальная дата котировок.
     :param end:
         Конечная дата котировок.
+    :param date:
+        Точная дата (используется при получении тикеров в индексе).
     :param table:
         Таблица, которую нужно загрузить (для запросов, предполагающих наличие нескольких таблиц).
     :param columns:
@@ -67,6 +71,8 @@ def _make_query(
         query["from"] = start
     if end:
         query["till"] = end
+    if date:
+        query["date"] = date
     if table:
         query["iss.only"] = f"{table},history.cursor"
     if columns:
@@ -533,3 +539,46 @@ def get_board_history(
     table = "history"
     query = _make_query(start=start, end=end, table=table, columns=columns)
     return _get_long_data(session, url, table, query)
+
+
+def get_index_tickers(
+    session: requests.Session,
+    index: str,
+    date: Optional[str] = None,
+    columns: Optional[Tuple[str, ...]] = (
+        "ticker",
+        "from",
+        "till",
+        "tradingsession",
+    ),
+    market: str = "index",
+    engine: str = "stock",
+):
+    """Получить информацию по составу указанного индекса за указанную дату.
+
+    Описание запроса - https://iss.moex.com/iss/reference/148
+
+    :param session:
+        Сессия интернет соединения.
+    :param index:
+        Название индекса. Например, IMOEX. Список: https://iss.moex.com/iss/statistics/engines/stock/markets/index/analytics
+    :param date:
+        Дата вида ГГГГ-ММ-ДД. Если указано, то будут показаны только активные инструменты, по которым тогда рассчитывалось значение индекса. Если в указанный день не было торгов, то вернёт пустой список! При отсутствии данные будут загружены с начала истории. 
+    :param columns:
+        Кортеж столбцов, которые нужно загрузить - по умолчанию режим торгов, дата торгов, цена закрытия и объем в
+        штуках и стоимости. Если пустой или None, то загружаются все столбцы.
+    :param market:
+        Рынок - по умолчанию индексы.
+    :param engine:
+        Движок - по умолчанию акции.
+
+    :return:
+        Список словарей, которые напрямую конвертируется в pandas.DataFrame.
+    """
+    url = (
+        f"https://iss.moex.com/iss/statistics/engines/{engine}/markets/{market}/"
+        f"analytics/{index}/tickers.json"
+    )
+    table = "tickers"
+    query = _make_query(date=date, table=table, columns=columns)
+    return _get_short_data(session, url, table, query)

@@ -287,3 +287,10 @@ def test_get_board_history_to_end(session):
     assert df.at["2018-08-10", "VALUE"] == pytest.approx(8_626_464.5)
     assert df.at["2018-09-06", "CLOSE"] == pytest.approx(660)
     assert df.at["2018-08-28", "VOLUME"] == 47428
+
+def test_get_index_tickers(session):
+    data = requests.get_index_tickers(session, index='IMOEX', date='2023-03-03')
+    assert len(data) == 40
+    assert data[15]['ticker'] == 'MAGN'
+    assert data[25]['till'] == '2023-03-03'
+    assert data[35]['tradingsession'] == 3
