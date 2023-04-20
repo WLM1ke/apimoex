@@ -70,7 +70,7 @@ def test_get_reference(session):
         {"id": 6, "name": "interventions", "title": "Товарные интервенции"},
         {"id": 7, "name": "offboard", "title": "ОТС-система"},
         {'id': 9, 'name': 'agro', 'title': 'Агро'},
-        {'id': 1012, 'name': 'otc', 'title': 'OTC Система'}
+        {'id': 1012, 'name': 'otc', 'title': 'ОТС с ЦК'}
     ]
 
 
