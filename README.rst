@@ -1,13 +1,6 @@
 MOEX ISS API
 ============
 
-.. image:: https://github.com/WLM1ke/apimoex/workflows/tests/badge.svg
-    :target: https://github.com/WLM1ke/apimoex/actions
-.. image:: https://codecov.io/gh/WLM1ke/apimoex/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/WLM1ke/apimoex
-.. image:: https://badge.fury.io/py/apimoex.svg
-    :target: https://badge.fury.io/py/apimoex
-
 Реализация части запросов к `MOEX Informational & Statistical Server <https://www.moex.com/a2193>`_.
 
 Документация

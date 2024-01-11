@@ -1,27 +1,21 @@
 name: tests
 
-on: push
+on: [push, pull_request]
 
 jobs:
   tests:
     name: Tests
-    runs-on: macOS-latest
+    runs-on: macos-latest
 
     steps:
-    - name: Checkout apimoex
-      uses: actions/checkout@v1
-    - name: Set up Python 3.7
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.7
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Test with pytest
-      run: |
-        pytest tests -v --cov=apimoex --cov-report=term-missing --cov-report=xml --setup-show
-    - name: Upload coverage to Codecov
-      run: |
-        pip install codecov
-        codecov --token=${{secrets.CODECOV_TOKEN}}
+      - name: Checkout aiomoex
+        uses: actions/checkout@v3
+
+      - name: Install go-task
+        run: brew install go-task
+
+      - name: Setup venv, install tools and dependencies
+        run: task setup
+
+      - name: Lint and test
+        run: task test
