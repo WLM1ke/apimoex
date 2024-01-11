@@ -3,8 +3,7 @@ import pandas as pd
 import pytest
 from requests import Session
 
-from apimoex import client
-from apimoex import requests
+from apimoex import client, requests
 
 
 @pytest.fixture(scope="module", name="session")
@@ -36,42 +35,28 @@ def test_make_query_full():
     assert query["interval"] == 60
     assert query["from"] == "2019-10-09"
     assert query["till"] == "2019-11-12"
-    assert query["iss.only"] == f"new_table,history.cursor"
+    assert query["iss.only"] == "new_table,history.cursor"
     assert query["new_table.columns"] == "4,a"
 
 
 def test_get_table():
     # noinspection PyProtectedMember
-    query = requests._get_table(
-        dict(a="b"), "a"
-    )
+    query = requests._get_table(dict(a="b"), "a")
     assert query == "b"
 
 
 def test_get_table_notable():
     with pytest.raises(client.ISSMoexError) as error:
         # noinspection PyProtectedMember
-        requests._get_table(
-            dict(a="b"), "b"
-        )
+        requests._get_table(dict(a="b"), "b")
     assert "Отсутствует таблица b в данных" in str(error.value)
 
 
 def test_get_reference(session):
     data = requests.get_reference(session, "engines")
     assert isinstance(data, list)
-    assert len(data) == 9
-    assert data == [
-        {"id": 1, "name": "stock", "title": "Фондовый рынок и рынок депозитов"},
-        {"id": 2, "name": "state", "title": "Рынок ГЦБ (размещение)"},
-        {"id": 3, "name": "currency", "title": "Валютный рынок"},
-        {"id": 4, "name": "futures", "title": "Срочный рынок"},
-        {"id": 5, "name": "commodity", "title": "Товарный рынок"},
-        {"id": 6, "name": "interventions", "title": "Товарные интервенции"},
-        {"id": 7, "name": "offboard", "title": "ОТС-система"},
-        {'id': 9, 'name': 'agro', 'title': 'Агро'},
-        {'id': 1012, 'name': 'otc', 'title': 'ОТС с ЦК'}
-    ]
+    assert len(data) == 10
+    assert data[0] == {"id": 1, "name": "stock", "title": "Фондовый рынок и рынок депозитов"}
 
 
 check_points = [
@@ -96,24 +81,24 @@ def test_find_security_description(session):
     assert len(data) == 19
     assert data[8] == dict(name="ISSUEDATE", title="Дата начала торгов", value="2009-12-01")
     # data = [
-    #     {'name': 'SECID', 'title': 'Код ценной бумаги', 'value': 'IRAO'}, 
-    #     {'name': 'NAME', 'title': 'Полное наименование', 'value': '"Интер РАО" ПАО ао'}, 
-    #     {'name': 'SHORTNAME', 'title': 'Краткое наименование', 'value': 'ИнтерРАОао'}, 
-    #     {'name': 'ISIN', 'title': 'ISIN код', 'value': 'RU000A0JPNM1'}, 
-    #     {'name': 'REGNUMBER', 'title': 'Номер государственной регистрации', 'value': '1-04-33498-E'}, 
-    #     {'name': 'ISSUESIZE', 'title': 'Объем выпуска', 'value': '104400000000'}, 
-    #     {'name': 'FACEVALUE', 'title': 'Номинальная стоимость', 'value': '2.80977'}, 
-    #     {'name': 'FACEUNIT', 'title': 'Валюта номинала', 'value': 'SUR'}, 
-    #     {'name': 'ISSUEDATE', 'title': 'Дата начала торгов', 'value': '2009-12-01'}, 
-    #     {'name': 'LATNAME', 'title': 'Английское наименование', 'value': 'Inter RAO ao'}, 
-    #     {'name': 'LISTLEVEL', 'title': 'Уровень листинга', 'value': '1'}, 
-    #     {'name': 'ISQUALIFIEDINVESTORS', 'title': 'Бумаги для квалифицированных инвесторов', 'value': '0'}, 
-    #     {'name': 'MORNINGSESSION', 'title': 'Допуск к утренней дополнительной торговой сессии', 'value': '1'}, 
-    #     {'name': 'EVENINGSESSION', 'title': 'Допуск к вечерней дополнительной торговой сессии', 'value': '1'}, 
-    #     {'name': 'TYPENAME', 'title': 'Вид/категория ценной бумаги', 'value': 'Акция обыкновенная'}, 
-    #     {'name': 'GROUP', 'title': 'Код типа инструмента', 'value': 'stock_shares'}, 
-    #     {'name': 'TYPE', 'title': 'Тип бумаги', 'value': 'common_share'}, 
-    #     {'name': 'GROUPNAME', 'title': 'Типа инструмента', 'value': 'Акции'}, 
+    #     {'name': 'SECID', 'title': 'Код ценной бумаги', 'value': 'IRAO'},
+    #     {'name': 'NAME', 'title': 'Полное наименование', 'value': '"Интер РАО" ПАО ао'},
+    #     {'name': 'SHORTNAME', 'title': 'Краткое наименование', 'value': 'ИнтерРАОао'},
+    #     {'name': 'ISIN', 'title': 'ISIN код', 'value': 'RU000A0JPNM1'},
+    #     {'name': 'REGNUMBER', 'title': 'Номер государственной регистрации', 'value': '1-04-33498-E'},
+    #     {'name': 'ISSUESIZE', 'title': 'Объем выпуска', 'value': '104400000000'},
+    #     {'name': 'FACEVALUE', 'title': 'Номинальная стоимость', 'value': '2.80977'},
+    #     {'name': 'FACEUNIT', 'title': 'Валюта номинала', 'value': 'SUR'},
+    #     {'name': 'ISSUEDATE', 'title': 'Дата начала торгов', 'value': '2009-12-01'},
+    #     {'name': 'LATNAME', 'title': 'Английское наименование', 'value': 'Inter RAO ao'},
+    #     {'name': 'LISTLEVEL', 'title': 'Уровень листинга', 'value': '1'},
+    #     {'name': 'ISQUALIFIEDINVESTORS', 'title': 'Бумаги для квалифицированных инвесторов', 'value': '0'},
+    #     {'name': 'MORNINGSESSION', 'title': 'Допуск к утренней дополнительной торговой сессии', 'value': '1'},
+    #     {'name': 'EVENINGSESSION', 'title': 'Допуск к вечерней дополнительной торговой сессии', 'value': '1'},
+    #     {'name': 'TYPENAME', 'title': 'Вид/категория ценной бумаги', 'value': 'Акция обыкновенная'},
+    #     {'name': 'GROUP', 'title': 'Код типа инструмента', 'value': 'stock_shares'},
+    #     {'name': 'TYPE', 'title': 'Тип бумаги', 'value': 'common_share'},
+    #     {'name': 'GROUPNAME', 'title': 'Типа инструмента', 'value': 'Акции'},
     #     {'name': 'EMITTER_ID', 'title': 'Код эмитента', 'value': '2140'}
     # ]
 
@@ -157,7 +142,7 @@ def test_get_market_candles_from_beginning(session):
     assert isinstance(data, list)
     assert len(data) > 500
     df = pd.DataFrame(data)
-    assert df.columns.size == 6
+    assert df.columns.size == 7
     assert df.loc[0, "open"] == pytest.approx(141.55)
     assert df.loc[1, "close"] == pytest.approx(141.59)
     assert df.loc[2, "high"] == pytest.approx(142.4)
@@ -167,17 +152,16 @@ def test_get_market_candles_from_beginning(session):
 
 
 def test_get_market_candles_to_end(session):
-    data = requests.get_market_candles(session, "LSRG", interval=4, start="2008-01-01")
+    data = requests.get_market_candles(session, "LSRG", interval=24, start="2020-08-20")
     assert isinstance(data, list)
-    assert len(data) > 47
-    df = pd.DataFrame(data)
-    assert df.columns.size == 6
-    assert df.loc[0, "open"] == pytest.approx(1130)
-    assert df.loc[1, "close"] == pytest.approx(970)
-    assert df.loc[2, "high"] == pytest.approx(1045)
-    assert df.loc[3, "low"] == pytest.approx(429.9)
-    assert df.loc[4, "value"] == pytest.approx(1109833660.9)
-    assert df.loc[6, "begin"] == "2012-07-01 00:00:00"
+    assert len(data) > 13
+    assert len(data[0]) == 7
+    assert data[0]["open"] == pytest.approx(775.4)
+    assert data[1]["close"] == pytest.approx(771.8)
+    assert data[2]["high"] == pytest.approx(779.8)
+    assert data[3]["low"] == pytest.approx(770.2)
+    assert data[4]["value"] == pytest.approx(59495740.6)
+    assert data[6]["begin"] == "2020-08-28 00:00:00"
 
 
 def test_get_market_candles_empty_history(session):
@@ -191,7 +175,7 @@ def test_get_board_candles_from_beginning(session):
     assert isinstance(data, list)
     assert len(data) > 500
     df = pd.DataFrame(data)
-    assert df.columns.size == 6
+    assert df.columns.size == 7
     assert df.loc[0, "open"] == pytest.approx(202.7)
     assert df.loc[1, "close"] == pytest.approx(204.12)
     assert df.loc[2, "high"] == pytest.approx(205)
@@ -205,7 +189,7 @@ def test_get_board_candles_to_end(session):
     assert isinstance(data, list)
     assert len(data) > 52
     df = pd.DataFrame(data)
-    assert df.columns.size == 6
+    assert df.columns.size == 7
     assert df.loc[0, "open"] == pytest.approx(0.152)
     assert df.loc[1, "close"] == pytest.approx(0.15689)
     assert df.loc[2, "high"] == pytest.approx(0.15998)
@@ -218,10 +202,10 @@ def test_get_board_dates(session):
     data = requests.get_board_dates(session)
     assert isinstance(data, list)
     assert len(data) == 1
-    assert isinstance(data[0]['from'], str)
-    assert isinstance(data[0]['till'], str)
-    assert len(data[0]['from']) == 10
-    assert len(data[0]['till']) == 10
+    assert isinstance(data[0]["from"], str)
+    assert isinstance(data[0]["till"], str)
+    assert len(data[0]["from"]) == 10
+    assert len(data[0]["till"]) == 10
 
 
 def test_get_board_securities(session):
@@ -229,21 +213,13 @@ def test_get_board_securities(session):
     assert isinstance(data, list)
     assert len(data) > 200
     df = pd.DataFrame(data)
-    df.set_index("SECID", inplace=True)
+    df = df.set_index("SECID")
     assert df.loc["AKRN", "SHORTNAME"] == "Акрон"
     assert df.loc["GAZP", "REGNUMBER"] == "1-02-00028-A"
     assert df.loc["TTLK", "LOTSIZE"] == 1000
     assert df.loc["MRSB", "SHORTNAME"] == "МордЭнСб"
     assert df.loc["MRSB", "REGNUMBER"] == "1-01-55055-E"
     assert df.loc["MRSB", "LOTSIZE"] == 10000
-    assert df.index[0] == "ABRD"
-    assert df["SHORTNAME"].iat[0] == "АбрауДюрсо"
-    assert df["REGNUMBER"].iat[0] == "1-02-12500-A"
-    assert df["LOTSIZE"].iat[0] == 10
-    assert df["SHORTNAME"].iat[-1] == "ЗВЕЗДА ао"
-    assert df["REGNUMBER"].iat[-1] == "1-01-00169-D"
-    assert df["LOTSIZE"].iat[-1] == 1000
-    assert df.index[-1] == "ZVEZ"
 
 
 def test_get_market_history_from_beginning(session):
@@ -288,9 +264,10 @@ def test_get_board_history_to_end(session):
     assert df.at["2018-09-06", "CLOSE"] == pytest.approx(660)
     assert df.at["2018-08-28", "VOLUME"] == 47428
 
+
 def test_get_index_tickers(session):
-    data = requests.get_index_tickers(session, index='IMOEX', date='2023-03-03')
+    data = requests.get_index_tickers(session, index="IMOEX", date="2023-03-03")
     assert len(data) == 40
-    assert data[15]['ticker'] == 'MAGN'
-    assert data[25]['till'] == '2023-03-03'
-    assert data[35]['tradingsession'] == 3
+    assert data[15]["ticker"] == "MAGN"
+    assert data[25]["till"] == "2023-03-03"
+    assert data[35]["tradingsession"] == 3

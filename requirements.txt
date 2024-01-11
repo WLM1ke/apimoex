@@ -1,6 +1,0 @@
-requests
-pytest
-pytest-cov
-sphinx
-aiohttp_theme
-pandas

@@ -1,0 +1,53 @@
+version: "3"
+
+vars:
+  APP: apimoex
+  TESTS: tests
+  PYTHON: 3.12
+  TOOLS: go-task rye
+
+tasks:
+  default:
+    desc: List available tasks
+    cmds:
+      - task -l
+
+  install:
+    desc: Setup venv, install tools and dependencies
+    cmds:
+      - brew install {{.TOOLS}}
+      - rye pin --relaxed {{.PYTHON}}
+      - rye sync --update-all --all-features --no-lock --force
+
+  update:
+    desc: Upgrade tools and dependencies
+    cmds:
+      - brew upgrade {{.TOOLS}}
+      - rye pin --relaxed {{.PYTHON}}
+      - rye sync --update-all --all-features
+
+  lint:
+    desc: Format and lint
+    cmds:
+      - rye run ruff format {{.APP}}
+      - rye run ruff format {{.TESTS}}
+      - rye run ruff {{.APP}} --unsafe-fixes
+      - rye run pyright {{.APP}}
+
+  test:
+    desc: Lint and test
+    deps: [lint]
+    cmds:
+      - rye run pytest {{.TESTS}} --cov={{.APP}}
+
+  docs:
+    desc: Update html docs
+    cmds:
+      - rye run sphinx-build -M html docs docs/build
+
+  publish:
+    desc: Publish to pypi
+    deps: [lint, docs]
+    cmds:
+      - rye build --clean
+      - rye publish

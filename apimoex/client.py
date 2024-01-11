@@ -1,22 +1,23 @@
 """Клиент для MOEX ISS."""
 from collections import abc
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Union
+from typing import cast
 
 import requests
 
-# Стандартные настройки для запроса расширенного представления json без дополнительных метаданных.
+Values = str | int | float
+TableRow = dict[str, Values]
+Table = list[TableRow]
+TablesDict = dict[str, Table]
+WebQuery = dict[str, str | int]
+
 BASE_QUERY = {"iss.json": "extended", "iss.meta": "off"}
 
 
 class ISSMoexError(Exception):
     """Базовое исключение."""
-    pass
 
 
-class ISSClient(abc.Iterable):
+class ISSClient(abc.Iterable[TablesDict]):
     """Клиент для MOEX ISS.
 
     Для работы клиента необходимо передать requests.Session.
@@ -25,7 +26,7 @@ class ISSClient(abc.Iterable):
     поддерживается протокол итерируемого для отдельных блоков или метод get_all для их автоматического сбора.
     """
 
-    def __init__(self, session: requests.Session, url: str, query: dict = None):
+    def __init__(self, session: requests.Session, url: str, query: WebQuery | None = None) -> None:
         """MOEX ISS является REST сервером.
 
         Полный перечень запросов и параметров к ним https://iss.moex.com/iss/reference/
@@ -41,12 +42,13 @@ class ISSClient(abc.Iterable):
         """
         self._session = session
         self._url = url
-        self._query = query or dict()
+        self._query = query or {}
 
     def __repr__(self) -> str:
+        """Наименование класса и содержание запроса к ISS Moex."""
         return f"{self.__class__.__name__}(url={self._url}, query={self._query})"
 
-    def __iter__(self) -> Dict[str, List[Dict[str, Union[str, int, float]]]]:
+    def __iter__(self) -> abc.Iterator[TablesDict]:
         """Генератор по ответам состоящим из нескольких блоков.
 
         На часть запросов выдается только начальный блок данных (обычно из 100 элементов). Генератор обеспечивает
@@ -68,8 +70,8 @@ class ISSClient(abc.Iterable):
                     )
                 del data["history.cursor"]
                 yield data
-                start += cursor["PAGESIZE"]
-                if start >= cursor["TOTAL"]:
+                start += cast(int, cursor["PAGESIZE"])
+                if start >= cast(int, cursor["TOTAL"]):
                     return
             else:
                 # Наименование ключа может быть любым
@@ -80,9 +82,7 @@ class ISSClient(abc.Iterable):
                     return
                 start += block_size
 
-    def get(
-        self, start: Optional[int] = None
-    ) -> Dict[str, List[Dict[str, Union[str, int, float]]]]:
+    def get(self, start: int | None = None) -> dict[str, list[dict[str, str | int | float]]]:
         """Загрузка данных.
 
         :param start:
@@ -97,22 +97,23 @@ class ISSClient(abc.Iterable):
         with self._session.get(self._url, params=query) as respond:
             try:
                 respond.raise_for_status()
-            except requests.HTTPError:
-                raise ISSMoexError("Неверный url", respond.url)
+            except requests.HTTPError as err:
+                raise ISSMoexError("Неверный url", respond.url) from err
             else:
                 _, data, *wrong_data = respond.json()
         if len(wrong_data) != 0:
             raise ISSMoexError("Ответ содержит некорректные данные", respond.url)
         return data
 
-    def _make_query(self, start=None) -> Dict[str, Union[str, int]]:
+    def _make_query(self, start: int | None = None) -> WebQuery:
         """К общему набору параметров запроса добавляется требование предоставить ответ в виде расширенного json."""
-        query = dict(**BASE_QUERY, **self._query)
+        query: WebQuery = dict(**BASE_QUERY, **self._query)
         if start:
             query["start"] = start
+
         return query
 
-    def get_all(self) -> Dict[str, List[Dict[str, Union[str, int, float]]]]:
+    def get_all(self) -> TablesDict:
         """Собирает все блоки данных для запросов, ответы на которые выдаются по частям отдельными блоками.
 
         :return:
@@ -120,9 +121,10 @@ class ISSClient(abc.Iterable):
             соответствует одной из таблиц с данными. Таблицы являются списками словарей, которые напрямую конвертируются
             в pandas.DataFrame.
         """
-        all_data = dict()
+        all_data: TablesDict = {}
         for data in self:
             # noinspection PyUnresolvedReferences
             for key, value in data.items():
                 all_data.setdefault(key, []).extend(value)
+
         return all_data

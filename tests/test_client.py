@@ -143,9 +143,7 @@ def test_wrong_cursor_size(monkeypatch, session):
     monkeypatch.setattr(iss, "get", lambda x: fake_cursor)
     with pytest.raises(client.ISSMoexError) as error:
         iss.get_all()
-    assert f"Некорректные данные history.cursor [0, 1] для начальной позиции 0" in str(
-        error.value
-    )
+    assert f"Некорректные данные history.cursor [0, 1] для начальной позиции 0" in str(error.value)
 
 
 def test_wrong_cursor_index(monkeypatch, session):
@@ -155,6 +153,4 @@ def test_wrong_cursor_index(monkeypatch, session):
     monkeypatch.setattr(iss, "get", lambda x: fake_cursor)
     with pytest.raises(client.ISSMoexError) as error:
         iss.get_all()
-    assert "Некорректные данные history.cursor [{'INDEX': 1}] для начальной позиции 0" in str(
-        error.value
-    )
+    assert "Некорректные данные history.cursor [{'INDEX': 1}] для начальной позиции 0" in str(error.value)

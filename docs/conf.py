@@ -6,14 +6,11 @@ _package_name = "apimoex"
 
 _route_path = os.path.abspath("../")
 sys.path.insert(0, _route_path)
-_version_path = os.path.abspath(os.path.join(_route_path, _package_name, "__init__.py"))
+_version_path = os.path.abspath(os.path.join(_route_path, "pyproject.toml"))
 with open(_version_path) as file:
     try:
         _version_info = re.search(
-            r"^__version__ = \""
-            r"(?P<major>\d+)"
-            r"\.(?P<minor>\d+)"
-            r"\.(?P<patch>\d+)\"$",
+            r"^version = \"" r"(?P<major>\d+)" r"\.(?P<minor>\d+)" r"\.(?P<patch>\d+)\"$",
             file.read(),
             re.M,
         ).groupdict()

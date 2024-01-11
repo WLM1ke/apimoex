@@ -4,15 +4,10 @@
     Полный перечень запросов https://iss.moex.com/iss/reference/
     Дополнительное описание https://fs.moex.com/files/6523
 """
-from typing import Dict
-from typing import List
-from typing import Optional
-from typing import Tuple
-from typing import Union
 
 import requests
 
-from . import client
+from apimoex import client
 
 __all__ = [
     "get_reference",
@@ -32,14 +27,14 @@ __all__ = [
 
 def _make_query(
     *,
-    q: Optional[str] = None,
-    interval: Optional[int] = None,
-    start: Optional[str] = None,
-    end: Optional[str] = None,
-    date: Optional[str] = None,
-    table: Optional[str] = None,
-    columns: Optional[Tuple[str, ...]] = None,
-) -> Dict[str, Union[str, int]]:
+    q: str | None = None,
+    interval: int | None = None,
+    start: str | None = None,
+    end: str | None = None,
+    date: str | None = None,
+    table: str | None = None,
+    columns: tuple[str, ...] | None = None,
+) -> client.WebQuery:
     """Формирует дополнительные параметры запроса к MOEX ISS.
 
     В случае None значений не добавляются в запрос.
@@ -62,7 +57,7 @@ def _make_query(
     :return:
         Словарь с дополнительными параметрами запроса.
     """
-    query = dict()
+    query: client.WebQuery = {}
     if q:
         query["q"] = q
     if interval:
@@ -77,21 +72,24 @@ def _make_query(
         query["iss.only"] = f"{table},history.cursor"
     if columns:
         query[f"{table}.columns"] = ",".join(columns)
+
     return query
 
 
-def _get_table(data: dict, table: str) -> list:
+def _get_table(data: client.TablesDict, table: str) -> client.Table:
     """Извлекает конкретную таблицу из данных."""
     try:
-        data = data[table]
-    except KeyError:
-        raise client.ISSMoexError(f"Отсутствует таблица {table} в данных")
-    return data
+        return data[table]
+    except KeyError as err:
+        raise client.ISSMoexError(f"Отсутствует таблица {table} в данных") from err
 
 
 def _get_short_data(
-    session: requests.Session, url: str, table: str, query: Optional[dict] = None
-) -> List[Dict[str, Union[str, int, float]]]:
+    session: requests.Session,
+    url: str,
+    table: str,
+    query: client.WebQuery | None = None,
+) -> client.Table:
     """Получить данные для запроса с выдачей всей информации за раз.
 
     :param session:
@@ -108,12 +106,16 @@ def _get_short_data(
     """
     iss = client.ISSClient(session, url, query)
     data = iss.get()
+
     return _get_table(data, table)
 
 
 def _get_long_data(
-    session: requests.Session, url, table, query=None
-) -> List[Dict[str, Union[str, int, float]]]:
+    session: requests.Session,
+    url: str,
+    table: str,
+    query: client.WebQuery | None = None,
+) -> client.Table:
     """Получить данные для запроса, в котором информация выдается несколькими блоками.
 
     :param session:
@@ -130,12 +132,11 @@ def _get_long_data(
     """
     iss = client.ISSClient(session, url, query)
     data = iss.get_all()
+
     return _get_table(data, table)
 
 
-def get_reference(
-    session: requests.Session, placeholder: str = "boards"
-) -> List[Dict[str, Union[str, int, float]]]:
+def get_reference(session: requests.Session, placeholder: str = "boards") -> list[dict[str, str | int | float]]:
     """Получить перечень доступных значений плейсхолдера в адресе запроса.
 
     Например в описание запроса https://iss.moex.com/iss/reference/32 присутствует следующий адрес
@@ -153,14 +154,15 @@ def get_reference(
         Список словарей, которые напрямую конвертируется в pandas.DataFrame.
     """
     url = "https://iss.moex.com/iss/index.json"
+
     return _get_short_data(session, url, placeholder)
 
 
 def find_securities(
     session: requests.Session,
     string: str,
-    columns: Optional[Tuple[str, ...]] = ("secid", "regnumber"),
-) -> List[Dict[str, Union[str, int, float]]]:
+    columns: tuple[str, ...] | None = ("secid", "regnumber"),
+) -> client.Table:
     """Найти инструменты по части Кода, Названию, ISIN, Идентификатору Эмитента, Номеру гос.регистрации.
 
     Один из вариантов использования - по регистрационному номеру узнать предыдущие тикеры эмитента, и с помощью
@@ -182,14 +184,15 @@ def find_securities(
     url = "https://iss.moex.com/iss/securities.json"
     table = "securities"
     query = _make_query(q=string, table=table, columns=columns)
+
     return _get_short_data(session, url, table, query)
 
 
 def find_security_description(
     session: requests.Session,
     security: str,
-    columns: Optional[Tuple[str, ...]] = ("name", "title", "value"),
-) -> List[Dict[str, Union[str, int, float]]]:
+    columns: tuple[str, ...] | None = ("name", "title", "value"),
+) -> client.Table:
     """Получить спецификацию инструмента.
 
     Один из вариантов использования - по тикеру узнать дату начала торгов.
@@ -210,6 +213,7 @@ def find_security_description(
     url = f"https://iss.moex.com/iss/securities/{security}.json"
     table = "description"
     query = _make_query(table=table, columns=columns)
+
     return _get_short_data(session, url, table, query)
 
 
@@ -218,7 +222,7 @@ def get_market_candle_borders(
     security: str,
     market: str = "shares",
     engine: str = "stock",
-) -> List[Dict[str, Union[str, int, float]]]:
+) -> client.Table:
     """Получить таблицу интервалов доступных дат для свечей различного размера на рынке для всех режимов торгов.
 
     Описание запроса - https://iss.moex.com/iss/reference/156
@@ -237,6 +241,7 @@ def get_market_candle_borders(
     """
     url = f"https://iss.moex.com/iss/engines/{engine}/markets/{market}/securities/{security}/candleborders.json"
     table = "borders"
+
     return _get_short_data(session, url, table)
 
 
@@ -246,7 +251,7 @@ def get_board_candle_borders(
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
-) -> List[Dict[str, Union[str, int, float]]]:
+) -> client.Table:
     """Получить таблицу интервалов доступных дат для свечей различного размера в указанном режиме торгов.
 
     Описание запроса - https://iss.moex.com/iss/reference/48
@@ -270,6 +275,7 @@ def get_board_candle_borders(
         f"boards/{board}/securities/{security}/candleborders.json"
     )
     table = "borders"
+
     return _get_short_data(session, url, table)
 
 
@@ -277,20 +283,20 @@ def get_market_candles(
     session: requests.Session,
     security: str,
     interval: int = 24,
-    start: Optional[str] = None,
-    end: Optional[str] = None,
-    columns: Optional[Tuple[str, ...]] = (
-            "begin",
-            "open",
-            "close",
-            "high",
-            "low",
-            "value",
-            "volume",
+    start: str | None = None,
+    end: str | None = None,
+    columns: tuple[str, ...] | None = (
+        "begin",
+        "open",
+        "close",
+        "high",
+        "low",
+        "value",
+        "volume",
     ),
     market: str = "shares",
     engine: str = "stock",
-) -> List[Dict[str, Union[str, int, float]]]:
+) -> client.Table:
     """Получить свечи в формате HLOCV указанного инструмента на рынке для основного режима торгов за интервал дат.
 
     Если торговля идет в нескольких основных режимах, то на один интервал времени может быть выдано несколько свечек -
@@ -325,6 +331,7 @@ def get_market_candles(
     url = f"https://iss.moex.com/iss/engines/{engine}/markets/{market}/securities/{security}/candles.json"
     table = "candles"
     query = _make_query(interval=interval, start=start, end=end, table=table, columns=columns)
+
     return _get_long_data(session, url, table, query)
 
 
@@ -332,21 +339,21 @@ def get_board_candles(
     session: requests.Session,
     security: str,
     interval: int = 24,
-    start: Optional[str] = None,
-    end: Optional[str] = None,
-    columns: Optional[Tuple[str, ...]] = (
-            "begin",
-            "open",
-            "close",
-            "high",
-            "low",
-            "value",
-            "volume",
+    start: str | None = None,
+    end: str | None = None,
+    columns: tuple[str, ...] | None = (
+        "begin",
+        "open",
+        "close",
+        "high",
+        "low",
+        "value",
+        "volume",
     ),
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
-) -> List[Dict[str, Union[str, int, float]]]:
+) -> client.Table:
     """Получить свечи в формате HLOCV указанного инструмента в указанном режиме торгов за интервал дат.
 
     Описание запроса - https://iss.moex.com/iss/reference/46
@@ -382,6 +389,7 @@ def get_board_candles(
     )
     table = "candles"
     query = _make_query(interval=interval, start=start, end=end, table=table, columns=columns)
+
     return _get_long_data(session, url, table, query)
 
 
@@ -390,7 +398,7 @@ def get_board_dates(
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
-) -> List[Dict[str, Union[str, int, float]]]:
+) -> client.Table:
     """Получить интервал дат, доступных в истории для рынка по заданному режиму торгов.
 
     Описание запроса - https://iss.moex.com/iss/reference/26
@@ -409,17 +417,18 @@ def get_board_dates(
     """
     url = f"https://iss.moex.com/iss/history/engines/{engine}/markets/{market}/boards/{board}/dates.json"
     table = "dates"
+
     return _get_short_data(session, url, table)
 
 
 def get_board_securities(
     session: requests.Session,
     table: str = "securities",
-    columns: Optional[Tuple[str, ...]] = ("SECID", "REGNUMBER", "LOTSIZE", "SHORTNAME"),
+    columns: tuple[str, ...] | None = ("SECID", "REGNUMBER", "LOTSIZE", "SHORTNAME"),
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
-) -> List[Dict[str, Union[str, int, float]]]:
+) -> client.Table:
     """Получить таблицу инструментов по режиму торгов со вспомогательной информацией.
 
     Описание запроса - https://iss.moex.com/iss/reference/32
@@ -444,15 +453,16 @@ def get_board_securities(
     """
     url = f"https://iss.moex.com/iss/engines/{engine}/markets/{market}/boards/{board}/securities.json"
     query = _make_query(table=table, columns=columns)
+
     return _get_short_data(session, url, table, query)
 
 
 def get_market_history(
     session: requests.Session,
     security: str,
-    start: Optional[str] = None,
-    end: Optional[str] = None,
-    columns: Optional[Tuple[str, ...]] = (
+    start: str | None = None,
+    end: str | None = None,
+    columns: tuple[str, ...] | None = (
         "BOARDID",
         "TRADEDATE",
         "CLOSE",
@@ -461,7 +471,7 @@ def get_market_history(
     ),
     market: str = "shares",
     engine: str = "stock",
-) -> List[Dict[str, Union[str, int, float]]]:
+) -> client.Table:
     """Получить историю по одной бумаге на рынке для всех режимов торгов за интервал дат.
 
     На одну дату может приходиться несколько значений, если торги шли в нескольких режимах.
@@ -490,15 +500,16 @@ def get_market_history(
     url = f"https://iss.moex.com/iss/history/engines/{engine}/markets/{market}/securities/{security}.json"
     table = "history"
     query = _make_query(start=start, end=end, table=table, columns=columns)
+
     return _get_long_data(session, url, table, query)
 
 
 def get_board_history(
     session: requests.Session,
     security: str,
-    start: Optional[str] = None,
-    end: Optional[str] = None,
-    columns: Optional[Tuple[str, ...]] = (
+    start: str | None = None,
+    end: str | None = None,
+    columns: tuple[str, ...] | None = (
         "BOARDID",
         "TRADEDATE",
         "CLOSE",
@@ -508,7 +519,7 @@ def get_board_history(
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
-):
+) -> client.Table:
     """Получить историю торгов для указанной бумаги в указанном режиме торгов за указанный интервал дат.
 
     Описание запроса - https://iss.moex.com/iss/reference/65
@@ -540,14 +551,15 @@ def get_board_history(
     )
     table = "history"
     query = _make_query(start=start, end=end, table=table, columns=columns)
+
     return _get_long_data(session, url, table, query)
 
 
 def get_index_tickers(
     session: requests.Session,
     index: str,
-    date: Optional[str] = None,
-    columns: Optional[Tuple[str, ...]] = (
+    date: str | None = None,
+    columns: tuple[str, ...] | None = (
         "ticker",
         "from",
         "till",
@@ -555,7 +567,7 @@ def get_index_tickers(
     ),
     market: str = "index",
     engine: str = "stock",
-):
+) -> client.Table:
     """Получить информацию по составу указанного индекса за указанную дату.
 
     Описание запроса - https://iss.moex.com/iss/reference/148
@@ -567,7 +579,9 @@ def get_index_tickers(
     :param index:
         Название индекса. Например, IMOEX.
     :param date:
-        Дата вида ГГГГ-ММ-ДД. Если указано, то будут показаны только активные инструменты, по которым тогда рассчитывалось значение индекса. Если в указанный день не было торгов, то вернёт пустой список! При отсутствии данные будут загружены с начала истории. 
+        Дата вида ГГГГ-ММ-ДД. Если указано, то будут показаны только активные инструменты,
+        по которым тогда рассчитывалось значение индекса. Если в указанный день не было торгов, то вернёт пустой список!
+        При отсутствии данные будут загружены с начала истории.
     :param columns:
         Кортеж столбцов, которые нужно загрузить - по умолчанию режим торгов, дата торгов, цена закрытия и объем в
         штуках и стоимости. Если пустой или None, то загружаются все столбцы.
@@ -579,10 +593,8 @@ def get_index_tickers(
     :return:
         Список словарей, которые напрямую конвертируется в pandas.DataFrame.
     """
-    url = (
-        f"https://iss.moex.com/iss/statistics/engines/{engine}/markets/{market}/"
-        f"analytics/{index}/tickers.json"
-    )
+    url = f"https://iss.moex.com/iss/statistics/engines/{engine}/markets/{market}/" f"analytics/{index}/tickers.json"
     table = "tickers"
     query = _make_query(date=date, table=table, columns=columns)
+
     return _get_short_data(session, url, table, query)
