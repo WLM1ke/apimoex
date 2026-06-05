@@ -12,7 +12,7 @@ with open(_version_path) as file:
         _version_info = re.search(
             r"^version = \"" r"(?P<major>\d+)" r"\.(?P<minor>\d+)" r"\.(?P<patch>\d+)\"$",
             file.read(),
-            re.M,
+            re.MULTILINE,
         ).groupdict()
     except IndexError:
         raise RuntimeError("Unable to determine version.")
@@ -23,7 +23,7 @@ release = "{major}.{minor}.{patch}".format(**_version_info)
 extensions = ["sphinx.ext.autodoc", "sphinx.ext.githubpages"]
 autodoc_member_order = "bysource"
 templates_path = ["templates"]
-html_static_path = ["static"]
+html_static_path = []
 
 source_suffix = ".rst"
 master_doc = "index"
@@ -51,12 +51,6 @@ html_theme_options = {
             "target": "https://github.com/WLM1ke/apimoex/actions",
             "height": "20",
             "alt": "Tests status",
-        },
-        {
-            "image": "https://codecov.io/gh/WLM1ke/apimoex/branch/master/graph/badge.svg",
-            "target": "https://codecov.io/gh/WLM1ke/apimoex",
-            "height": "20",
-            "alt": "Code coverage status",
         },
         {
             "image": "https://badge.fury.io/py/apimoex.svg",
