@@ -300,10 +300,6 @@ div.admonition p.last {
 }
 
 
-div[class^="highlight-"] {
-    margin-top: -10px;
-}
-
 div.highlight {
     background-color: #fff;
 }

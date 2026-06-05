@@ -11,6 +11,10 @@
 
 .. autofunction:: apimoex.get_reference
 
+.. autofunction:: apimoex.get_engines
+
+.. autofunction:: apimoex.get_engine
+
 .. autofunction:: apimoex.find_securities
 
 .. autofunction:: apimoex.find_security_description
