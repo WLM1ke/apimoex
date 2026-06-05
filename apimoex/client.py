@@ -1,4 +1,5 @@
 """Клиент для MOEX ISS."""
+
 from collections import abc
 from typing import cast
 
@@ -70,8 +71,8 @@ class ISSClient(abc.Iterable[TablesDict]):
                     )
                 del data["history.cursor"]
                 yield data
-                start += cast(int, cursor["PAGESIZE"])
-                if start >= cast(int, cursor["TOTAL"]):
+                start += cast("int", cursor["PAGESIZE"])
+                if start >= cast("int", cursor["TOTAL"]):
                     return
             else:
                 # Наименование ключа может быть любым

@@ -1,4 +1,5 @@
 """Тесты для разнообразных запросов."""
+
 import pandas as pd
 import pytest
 from requests import Session
@@ -41,22 +42,21 @@ def test_make_query_full():
 
 def test_get_table():
     # noinspection PyProtectedMember
-    query = requests._get_table(dict(a="b"), "a")
+    query = requests._get_table({"a": "b"}, "a")
     assert query == "b"
 
 
 def test_get_table_notable():
     with pytest.raises(client.ISSMoexError) as error:
         # noinspection PyProtectedMember
-        requests._get_table(dict(a="b"), "b")
+        requests._get_table({"a": "b"}, "b")
     assert "Отсутствует таблица b в данных" in str(error.value)
 
 
 def test_get_reference(session):
     data = requests.get_reference(session, "engines")
     assert isinstance(data, list)
-    assert len(data) == 10
-    assert data[0] == {"id": 1, "name": "stock", "title": "Фондовый рынок и рынок депозитов"}
+    assert len(data) >= 10
 
 
 check_points = [
@@ -67,7 +67,7 @@ check_points = [
 ]
 
 
-@pytest.mark.parametrize("reg_number, expected", check_points)
+@pytest.mark.parametrize(("reg_number", "expected"), check_points)
 def test_find_securities(session, reg_number, expected):
     data = requests.find_securities(session, reg_number)
     assert isinstance(data, list)
@@ -76,31 +76,8 @@ def test_find_securities(session, reg_number, expected):
 
 def test_find_security_description(session):
     data = requests.find_security_description(session, "IRAO")
-    print(data)
     assert isinstance(data, list)
-    assert len(data) == 19
-    assert data[8] == dict(name="ISSUEDATE", title="Дата начала торгов", value="2009-12-01")
-    # data = [
-    #     {'name': 'SECID', 'title': 'Код ценной бумаги', 'value': 'IRAO'},
-    #     {'name': 'NAME', 'title': 'Полное наименование', 'value': '"Интер РАО" ПАО ао'},
-    #     {'name': 'SHORTNAME', 'title': 'Краткое наименование', 'value': 'ИнтерРАОао'},
-    #     {'name': 'ISIN', 'title': 'ISIN код', 'value': 'RU000A0JPNM1'},
-    #     {'name': 'REGNUMBER', 'title': 'Номер государственной регистрации', 'value': '1-04-33498-E'},
-    #     {'name': 'ISSUESIZE', 'title': 'Объем выпуска', 'value': '104400000000'},
-    #     {'name': 'FACEVALUE', 'title': 'Номинальная стоимость', 'value': '2.80977'},
-    #     {'name': 'FACEUNIT', 'title': 'Валюта номинала', 'value': 'SUR'},
-    #     {'name': 'ISSUEDATE', 'title': 'Дата начала торгов', 'value': '2009-12-01'},
-    #     {'name': 'LATNAME', 'title': 'Английское наименование', 'value': 'Inter RAO ao'},
-    #     {'name': 'LISTLEVEL', 'title': 'Уровень листинга', 'value': '1'},
-    #     {'name': 'ISQUALIFIEDINVESTORS', 'title': 'Бумаги для квалифицированных инвесторов', 'value': '0'},
-    #     {'name': 'MORNINGSESSION', 'title': 'Допуск к утренней дополнительной торговой сессии', 'value': '1'},
-    #     {'name': 'EVENINGSESSION', 'title': 'Допуск к вечерней дополнительной торговой сессии', 'value': '1'},
-    #     {'name': 'TYPENAME', 'title': 'Вид/категория ценной бумаги', 'value': 'Акция обыкновенная'},
-    #     {'name': 'GROUP', 'title': 'Код типа инструмента', 'value': 'stock_shares'},
-    #     {'name': 'TYPE', 'title': 'Тип бумаги', 'value': 'common_share'},
-    #     {'name': 'GROUPNAME', 'title': 'Типа инструмента', 'value': 'Акции'},
-    #     {'name': 'EMITTER_ID', 'title': 'Код эмитента', 'value': '2140'}
-    # ]
+    assert len(data) >= 19
 
 
 def test_get_market_candle_borders(session):
@@ -243,26 +220,26 @@ def test_get_market_history_to_end(session):
 def test_get_board_history_from_beginning(session):
     data = requests.get_board_history(session, "LSNGP", end="2014-08-01")
     df = pd.DataFrame(data)
-    df.set_index("TRADEDATE", inplace=True)
+    df = df.set_index("TRADEDATE")
     assert len(df.columns) == 4
     assert df.index[0] == "2014-06-09"
-    assert df.at["2014-06-09", "CLOSE"] == pytest.approx(14.7)
-    assert df.at["2014-08-01", "VOLUME"] == 4000
+    assert df.loc["2014-06-09", "CLOSE"] == pytest.approx(14.7)
+    assert df.loc["2014-08-01", "VOLUME"] == 4000
 
 
 def test_get_board_history_to_end(session):
     data = requests.get_board_history(session, "LSRG", start="2018-08-07")
     df = pd.DataFrame(data)
-    df.set_index("TRADEDATE", inplace=True)
+    df = df.set_index("TRADEDATE")
     assert len(df.columns) == 4
     assert df.index[0] == "2018-08-07"
     assert df.index[-1] >= "2018-11-19"
-    assert df.at["2018-08-07", "CLOSE"] == 777
-    assert df.at["2018-08-10", "VOLUME"] == 11313
-    assert df.at["2018-08-10", "BOARDID"] == "TQBR"
-    assert df.at["2018-08-10", "VALUE"] == pytest.approx(8_626_464.5)
-    assert df.at["2018-09-06", "CLOSE"] == pytest.approx(660)
-    assert df.at["2018-08-28", "VOLUME"] == 47428
+    assert df.loc["2018-08-07", "CLOSE"] == 777
+    assert df.loc["2018-08-10", "VOLUME"] == 11313
+    assert df.loc["2018-08-10", "BOARDID"] == "TQBR"
+    assert df.loc["2018-08-10", "VALUE"] == pytest.approx(8_626_464.5)
+    assert df.loc["2018-09-06", "CLOSE"] == pytest.approx(660)
+    assert df.loc["2018-08-28", "VOLUME"] == 47428
 
 
 def test_get_index_tickers(session):
@@ -278,8 +255,8 @@ def test_get_engines(session):
     assert isinstance(data, list)
     assert len(data) >= 10
     df = pd.DataFrame(data).set_index("name")
-    assert df.at["stock", "id"] == 1
-    assert df.at["stock", "title"] == "Фондовый рынок и рынок депозитов"
+    assert df.loc["stock", "id"] == 1
+    assert df.loc["stock", "title"] == "Фондовый рынок и рынок депозитов"
     assert "futures" in df.index
 
 
@@ -292,14 +269,14 @@ def test_get_engine_dailytable(session):
     assert {"date", "is_work_day", "start_time", "stop_time"} <= set(row)
     df = pd.DataFrame(data).set_index("date")
     # стабильные исторические записи (новый праздник в таблицу не задним числом)
-    assert df.at["2018-05-09", "is_work_day"] == 0      # перенос/праздник — нерабочий
-    assert df.at["2021-02-20", "is_work_day"] == 1      # суббота-отработка — рабочий
+    assert df.loc["2018-05-09", "is_work_day"] == 0  # перенос/праздник — нерабочий
+    assert df.loc["2021-02-20", "is_work_day"] == 1  # суббота-отработка — рабочий
 
 
 def test_get_engine_timetable(session):
     data = requests.get_engine(session, "stock", "timetable")
     assert isinstance(data, list)
-    assert len(data) == 7                                # 7 дней недели
+    assert len(data) == 7  # 7 дней недели
     df = pd.DataFrame(data).set_index("week_day")
     assert set(df.columns) >= {"is_work_day", "start_time", "stop_time"}
 

@@ -5,25 +5,28 @@
     Дополнительное описание https://fs.moex.com/files/6523
 """
 
-import requests
+from typing import TYPE_CHECKING
 
 from apimoex import client
 
+if TYPE_CHECKING:
+    import requests
+
 __all__ = [
-    "get_reference",
     "find_securities",
     "find_security_description",
-    "get_market_candle_borders",
     "get_board_candle_borders",
-    "get_market_candles",
     "get_board_candles",
     "get_board_dates",
-    "get_board_securities",
-    "get_market_history",
     "get_board_history",
-    "get_index_tickers",
-    "get_engines",
+    "get_board_securities",
     "get_engine",
+    "get_engines",
+    "get_index_tickers",
+    "get_market_candle_borders",
+    "get_market_candles",
+    "get_market_history",
+    "get_reference",
 ]
 
 
@@ -386,8 +389,7 @@ def get_board_candles(
         Список словарей, которые напрямую конвертируется в pandas.DataFrame.
     """
     url = (
-        f"https://iss.moex.com/iss/engines/{engine}/markets/{market}/"
-        f"boards/{board}/securities/{security}/candles.json"
+        f"https://iss.moex.com/iss/engines/{engine}/markets/{market}/boards/{board}/securities/{security}/candles.json"
     )
     table = "candles"
     query = _make_query(interval=interval, start=start, end=end, table=table, columns=columns)
@@ -548,8 +550,7 @@ def get_board_history(
         Список словарей, которые напрямую конвертируется в pandas.DataFrame.
     """
     url = (
-        f"https://iss.moex.com/iss/history/engines/{engine}/markets/{market}/"
-        f"boards/{board}/securities/{security}.json"
+        f"https://iss.moex.com/iss/history/engines/{engine}/markets/{market}/boards/{board}/securities/{security}.json"
     )
     table = "history"
     query = _make_query(start=start, end=end, table=table, columns=columns)
@@ -595,7 +596,7 @@ def get_index_tickers(
     :return:
         Список словарей, которые напрямую конвертируется в pandas.DataFrame.
     """
-    url = f"https://iss.moex.com/iss/statistics/engines/{engine}/markets/{market}/" f"analytics/{index}/tickers.json"
+    url = f"https://iss.moex.com/iss/statistics/engines/{engine}/markets/{market}/analytics/{index}/tickers.json"
     table = "tickers"
     query = _make_query(date=date, table=table, columns=columns)
 
