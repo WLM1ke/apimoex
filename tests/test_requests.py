@@ -271,3 +271,41 @@ def test_get_index_tickers(session):
     assert data[15]["ticker"] == "MAGN"
     assert data[25]["till"] == "2023-03-03"
     assert data[35]["tradingsession"] == 3
+
+
+def test_get_engines(session):
+    data = requests.get_engines(session)
+    assert isinstance(data, list)
+    assert len(data) >= 10
+    df = pd.DataFrame(data).set_index("name")
+    assert df.at["stock", "id"] == 1
+    assert df.at["stock", "title"] == "Фондовый рынок и рынок депозитов"
+    assert "futures" in df.index
+
+
+def test_get_engine_dailytable(session):
+    # по умолчанию dailytable — календарь исключений (выходные/праздники/переносы)
+    data = requests.get_engine(session, "stock")
+    assert isinstance(data, list)
+    assert len(data) > 0
+    row = data[0]
+    assert {"date", "is_work_day", "start_time", "stop_time"} <= set(row)
+    df = pd.DataFrame(data).set_index("date")
+    # стабильные исторические записи (новый праздник в таблицу не задним числом)
+    assert df.at["2018-05-09", "is_work_day"] == 0      # перенос/праздник — нерабочий
+    assert df.at["2021-02-20", "is_work_day"] == 1      # суббота-отработка — рабочий
+
+
+def test_get_engine_timetable(session):
+    data = requests.get_engine(session, "stock", "timetable")
+    assert isinstance(data, list)
+    assert len(data) == 7                                # 7 дней недели
+    df = pd.DataFrame(data).set_index("week_day")
+    assert set(df.columns) >= {"is_work_day", "start_time", "stop_time"}
+
+
+def test_get_engine_description(session):
+    data = requests.get_engine(session, "stock", "engine")
+    assert isinstance(data, list)
+    assert len(data) == 1
+    assert data[0]["NAME"] == "stock"

@@ -16,6 +16,8 @@ from apimoex.requests import (
     get_board_dates,
     get_board_history,
     get_board_securities,
+    get_engine,
+    get_engines,
     get_index_tickers,
     get_market_candle_borders,
     get_market_candles,
@@ -36,5 +38,7 @@ __all__ = [
     "get_market_history",
     "get_board_history",
     "get_index_tickers",
+    "get_engines",
+    "get_engine",
     "ISSClient",
 ]

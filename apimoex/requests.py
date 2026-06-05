@@ -22,6 +22,8 @@ __all__ = [
     "get_market_history",
     "get_board_history",
     "get_index_tickers",
+    "get_engines",
+    "get_engine",
 ]
 
 
@@ -598,3 +600,54 @@ def get_index_tickers(
     query = _make_query(date=date, table=table, columns=columns)
 
     return _get_short_data(session, url, table, query)
+
+
+def get_engines(session: requests.Session) -> client.Table:
+    """Получить перечень доступных торговых систем (движков) MOEX.
+
+    Например: https://iss.moex.com/iss/engines.json — stock, futures, currency и т.д.
+
+    Описание запроса - https://iss.moex.com/iss/reference/391
+
+    :param session:
+        Сессия интернет соединения.
+
+    :return:
+        Список словарей (id, name, title), который напрямую конвертируется в pandas.DataFrame.
+    """
+    url = "https://iss.moex.com/iss/engines.json"
+    table = "engines"
+
+    return _get_short_data(session, url, table)
+
+
+def get_engine(
+    session: requests.Session,
+    engine: str = "stock",
+    table: str = "dailytable",
+) -> client.Table:
+    """Получить описание и режим работы торговой системы (движка).
+
+    Например: https://iss.moex.com/iss/engines/stock.json — содержит три таблицы:
+      * ``engine``     — описание движка (NAME, title, short_title);
+      * ``timetable``  — недельное расписание (week_day, is_work_day, start/stop_time);
+      * ``dailytable`` — календарь исключений по датам (date, is_work_day, start/stop_time):
+        ``is_work_day=0`` — выходной/праздник, ``1`` — перенос рабочего дня. Источник
+        торгового календаря MOEX (выходные/праздники/переносы).
+
+    Описание запроса - https://iss.moex.com/iss/reference/397
+
+    :param session:
+        Сессия интернет соединения.
+    :param engine:
+        Движок - по умолчанию ``stock`` (фондовый рынок).
+    :param table:
+        Какую из таблиц вернуть: ``dailytable`` (по умолчанию, календарь),
+        ``timetable`` (недельное расписание) или ``engine`` (описание).
+
+    :return:
+        Список словарей выбранной таблицы, который напрямую конвертируется в pandas.DataFrame.
+    """
+    url = f"https://iss.moex.com/iss/engines/{engine}.json"
+
+    return _get_short_data(session, url, table)
