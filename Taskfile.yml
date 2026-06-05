@@ -47,5 +47,5 @@ tasks:
     desc: Publish to pypi
     deps: [lint, docs]
     cmds:
-      - uv build --clean
+      - uv build --clear
       - uv publish --token {{.CLI_ARGS}}
