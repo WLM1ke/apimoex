@@ -15,7 +15,7 @@ tasks:
     desc: Setup venv, install tools and dependencies
     cmds:
       - brew install {{.TOOLS}}
-      - rye sync --frozen
+      - uv sync --frozen
 
   update:
     desc: Upgrade tools and dependencies
