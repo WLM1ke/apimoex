@@ -607,7 +607,7 @@ def get_engines(session: requests.Session) -> client.Table:
 
     Например: https://iss.moex.com/iss/engines.json — stock, futures, currency и т.д.
 
-    Описание запроса - https://iss.moex.com/iss/reference/40
+    Описание запроса - https://iss.moex.com/iss/reference/391
 
     :param session:
         Сессия интернет соединения.
@@ -635,7 +635,7 @@ def get_engine(
         ``is_work_day=0`` — выходной/праздник, ``1`` — перенос рабочего дня. Источник
         торгового календаря MOEX (выходные/праздники/переносы).
 
-    Описание запроса - https://iss.moex.com/iss/reference/41
+    Описание запроса - https://iss.moex.com/iss/reference/397
 
     :param session:
         Сессия интернет соединения.
