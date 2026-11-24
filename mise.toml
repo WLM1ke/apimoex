@@ -1,0 +1,75 @@
+[tools]
+uv = "latest"
+python = "latest"
+
+[settings]
+lockfile = true
+locked = true
+lockfile_platforms = ["macos-arm64"]
+python.uv_venv_auto = "source"
+
+[env]
+UV_PYTHON = { value = "{{ tools.python.path }}", tools = true }
+
+# Installation and upgrades
+
+[tasks.install]
+description = "Install the locked tools, project dependencies and the git hooks"
+depends = ["install-deps", "install-git-hooks"]
+
+[tasks.install-tools]
+description = "Install the tools from mise.lock"
+run = "mise install --locked"
+
+[tasks.install-deps]
+description = "Install the project's locked dependencies"
+depends = ["install-tools"]
+run = "uv sync --locked"
+
+[tasks.install-git-hooks]
+description = "Install the git hooks that guard commits"
+run = "mise generate git-pre-commit --write --task check"
+
+[tasks.update]
+description = "Move the runtime and packages to the newest versions, then audit them"
+run = [
+    "mise lock --bump",
+    "mise install --locked",
+    "mise exec -- uv lock --upgrade",
+    "mise exec -- uv sync --locked",
+    "mise exec -- uv audit",
+]
+
+# Checks
+
+[tasks.check]
+description = "Run the full commit gate"
+depends = ["lint", "test", "lock-check"]
+
+[tasks.lint]
+description = "Format, lint and type-check the package and the tests"
+run = [
+    "uv run ruff check apimoex tests --exit-non-zero-on-fix",
+    "uv run ruff format apimoex tests --check",
+    "uv run basedpyright",
+]
+
+[tasks.test]
+description = "Run the test suite with coverage"
+run = "uv run pytest"
+
+[tasks.lock-check]
+description = "Check that both lockfiles match their configs"
+run = ["uv lock --check", "mise install --locked"]
+
+# Docs and release
+
+[tasks.docs]
+description = "Update the html docs"
+run = "uv run sphinx-build -M html docs docs/build"
+
+[tasks.publish]
+description = "Publish to pypi"
+usage = 'arg "<token>" help="PyPI API token"'
+depends = ["lint", "docs"]
+run = ["uv build --clear", 'uv publish --token "${usage_token?}"']

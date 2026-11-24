@@ -8,14 +8,17 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout aiomoex
-        uses: actions/checkout@v3
+      - name: Checkout apimoex
+        uses: actions/checkout@v7
 
-      - name: Install go-task
-        run: brew install go-task
+      - name: Install mise
+        uses: jdx/mise-action@v5
 
       - name: Setup venv, install tools and dependencies
-        run: task install
+        run: mise run install
 
-      - name: Lint and test
-        run: task test
+      - name: Lint
+        run: mise run lint
+
+      - name: Test
+        run: mise run test

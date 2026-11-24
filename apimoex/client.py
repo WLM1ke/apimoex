@@ -1,21 +1,48 @@
 """Клиент для MOEX ISS."""
 
 from collections import abc
-from typing import cast
+from typing import Final, cast
 
 import requests
 
-Values = str | int | float
-TableRow = dict[str, Values]
-Table = list[TableRow]
-TablesDict = dict[str, Table]
-WebQuery = dict[str, str | int]
+from apimoex.types import Table, TablesDict, WebQuery
 
-BASE_QUERY = {"iss.json": "extended", "iss.meta": "off"}
+# Extended JSON always returns two blocks: the header and the data.
+_RESPONSE_BLOCKS = 2
+
+BASE_QUERY: Final = {"iss.json": "extended", "iss.meta": "off"}
 
 
 class ISSMoexError(Exception):
-    """Базовое исключение."""
+    """Base exception."""
+
+
+class ISSHTTPError(ISSMoexError):
+    """The HTTP request to MOEX ISS failed."""
+
+    def __init__(self, url: str) -> None:
+        super().__init__(f"Invalid URL: {url}")
+
+
+class ISSResponseError(ISSMoexError):
+    """The MOEX ISS response contains invalid data."""
+
+    def __init__(self, url: str) -> None:
+        super().__init__(f"Response contains invalid data: {url}")
+
+
+class ISSCursorError(ISSMoexError):
+    """Invalid history.cursor data."""
+
+    def __init__(self, cursor: Table, start: int) -> None:
+        super().__init__(f"Invalid history.cursor data {cursor} for start position {start}")
+
+
+class ISSTableNotFoundError(ISSMoexError):
+    """The requested table is missing in the response."""
+
+    def __init__(self, table: str) -> None:
+        super().__init__(f"Table {table} is missing in the response")
 
 
 class ISSClient(abc.Iterable[TablesDict]):
@@ -66,9 +93,7 @@ class ISSClient(abc.Iterable[TablesDict]):
             if "history.cursor" in data:
                 cursor, *wrong_data = data["history.cursor"]
                 if len(wrong_data) != 0 or cursor["INDEX"] != start:
-                    raise ISSMoexError(
-                        f"Некорректные данные history.cursor {data['history.cursor']} для начальной позиции {start}"
-                    )
+                    raise ISSCursorError(data["history.cursor"], start)
                 del data["history.cursor"]
                 yield data
                 start += cast("int", cursor["PAGESIZE"])
@@ -83,7 +108,7 @@ class ISSClient(abc.Iterable[TablesDict]):
                     return
                 start += block_size
 
-    def get(self, start: int | None = None) -> dict[str, list[dict[str, str | int | float]]]:
+    def get(self, start: int | None = None) -> TablesDict:
         """Загрузка данных.
 
         :param start:
@@ -99,12 +124,17 @@ class ISSClient(abc.Iterable[TablesDict]):
             try:
                 respond.raise_for_status()
             except requests.HTTPError as err:
-                raise ISSMoexError("Неверный url", respond.url) from err
-            else:
-                _, data, *wrong_data = respond.json()
-        if len(wrong_data) != 0:
-            raise ISSMoexError("Ответ содержит некорректные данные", respond.url)
-        return data
+                raise ISSHTTPError(respond.url) from err
+            response = cast("object", respond.json())
+        if not isinstance(response, list):
+            raise ISSResponseError(respond.url)
+        blocks = cast("list[object]", response)
+        if len(blocks) != _RESPONSE_BLOCKS:
+            raise ISSResponseError(respond.url)
+        _, data = blocks
+        if not isinstance(data, dict):
+            raise ISSResponseError(respond.url)
+        return cast("TablesDict", data)
 
     def _make_query(self, start: int | None = None) -> WebQuery:
         """К общему набору параметров запроса добавляется требование предоставить ответ в виде расширенного json."""
@@ -124,7 +154,6 @@ class ISSClient(abc.Iterable[TablesDict]):
         """
         all_data: TablesDict = {}
         for data in self:
-            # noinspection PyUnresolvedReferences
             for key, value in data.items():
                 all_data.setdefault(key, []).extend(value)
 

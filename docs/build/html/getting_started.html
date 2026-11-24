@@ -5,10 +5,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Начало работы &#8212; документация apimoex 1.5.0</title>
+    <title>Начало работы &#8212; документация apimoex 1.6.0</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=ee51e14b" />
     <link rel="stylesheet" type="text/css" href="_static/aiohttp.css?v=9042f6b9" />
-    <script src="_static/documentation_options.js?v=8ea1708b"></script>
+    <script src="_static/documentation_options.js?v=1cdeae60"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/translations.js?v=cd1d70c9"></script>
@@ -51,11 +51,11 @@
 
 
 <span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">apimoex</span><span class="o">.</span><span class="n">get_board_history</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">&#39;SNGSP&#39;</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">apimoex</span><span class="o">.</span><span class="n">get_board_history</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s1">'SNGSP'</span><span class="p">)</span>
     <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;TRADEDATE&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">(),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'TRADEDATE'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(),</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">(),</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
     <span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -75,7 +75,7 @@ TRADEDATE
 2019-09-09    TQBR  34.570   54331300  1.905837e+09
 2019-09-10    TQBR  35.250   45966000  1.605849e+09
 
-&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+&lt;class 'pandas.core.frame.DataFrame'&gt;
 Index: 1326 entries, 2014-06-09 to 2019-09-10
 Data columns (total 4 columns):
 BOARDID    1326 non-null object
@@ -96,19 +96,19 @@ memory usage: 51.8+ KB
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 
-<span class="n">request_url</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;https://iss.moex.com/iss/engines/stock/&#39;</span>
-               <span class="s1">&#39;markets/shares/boards/TQBR/securities.json&#39;</span><span class="p">)</span>
-<span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;securities.columns&#39;</span><span class="p">:</span> <span class="p">(</span><span class="s1">&#39;SECID,&#39;</span>
-                                    <span class="s1">&#39;REGNUMBER,&#39;</span>
-                                    <span class="s1">&#39;LOTSIZE,&#39;</span>
-                                    <span class="s1">&#39;SHORTNAME&#39;</span><span class="p">)}</span>
+<span class="n">request_url</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'https://iss.moex.com/iss/engines/stock/'</span>
+               <span class="s1">'markets/shares/boards/TQBR/securities.json'</span><span class="p">)</span>
+<span class="n">arguments</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'securities.columns'</span><span class="p">:</span> <span class="p">(</span><span class="s1">'SECID,'</span>
+                                    <span class="s1">'REGNUMBER,'</span>
+                                    <span class="s1">'LOTSIZE,'</span>
+                                    <span class="s1">'SHORTNAME'</span><span class="p">)}</span>
 <span class="k">with</span> <span class="n">requests</span><span class="o">.</span><span class="n">Session</span><span class="p">()</span> <span class="k">as</span> <span class="n">session</span><span class="p">:</span>
     <span class="n">iss</span> <span class="o">=</span> <span class="n">apimoex</span><span class="o">.</span><span class="n">ISSClient</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">request_url</span><span class="p">,</span> <span class="n">arguments</span><span class="p">)</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">iss</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
-    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;securities&#39;</span><span class="p">])</span>
-    <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">&#39;SECID&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">(),</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">'securities'</span><span class="p">])</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'SECID'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">(),</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">tail</span><span class="p">(),</span> <span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="p">)</span>
     <span class="n">df</span><span class="o">.</span><span class="n">info</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -128,7 +128,7 @@ YRSBP  2-01-50099-A       10   ТНСэнЯр-п
 ZILL   1-02-00036-A        1      ЗИЛ ао
 ZVEZ   1-01-00169-D     1000   ЗВЕЗДА ао
 
-&lt;class &#39;pandas.core.frame.DataFrame&#39;&gt;
+&lt;class 'pandas.core.frame.DataFrame'&gt;
 Index: 264 entries, ABRD to ZVEZ
 Data columns (total 3 columns):
 REGNUMBER    255 non-null object
@@ -195,23 +195,23 @@ memory usage: 8.2+ KB
 <li class="toctree-l3"><a class="reference internal" href="api.html#id4">Исторические данные по дневным котировкам</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#id5">Реализация произвольного запроса</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="api.html#apimoex.ISSClient"><code class="docutils literal notranslate"><span class="pre">ISSClient</span></code></a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id5">Реализация произвольного запроса</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id8">Типы</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#id9">Исключения</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="change_log.html">Список изменений</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id2">1.5.0 (2026-06-05)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id3">1.4.0 (2024-01-11)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id4">1.3.0 (2023-04-20)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id5">1.2.0 (2020-02-03)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id6">1.1.2 (2019-09-15)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id7">1.1.1 (2019-09-13)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id8">1.1.0 (2019-09-13)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id9">1.0.2 (2019-09-12)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id10">1.0.1 (2019-09-11)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="change_log.html#id11">1.0.0 (2019-09-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id2">1.6.0 (2026-11-24)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id3">1.5.0 (2026-06-05)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id4">1.4.0 (2024-01-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id5">1.3.0 (2023-04-20)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id6">1.2.0 (2020-02-03)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id7">1.1.2 (2019-09-15)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id8">1.1.1 (2019-09-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id9">1.1.0 (2019-09-13)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id10">1.0.2 (2019-09-12)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id11">1.0.1 (2019-09-11)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="change_log.html#id12">1.0.0 (2019-09-11)</a></li>
 </ul>
 </li>
 </ul>
@@ -222,10 +222,10 @@ memory usage: 8.2+ KB
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, Mikhail Korotkov aka WLMike.
+      &copy;2019-2026, Mikhail Korotkov aka WLMike.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 9.1.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 9.2.0</a>
       
       |
       <a href="_sources/getting_started.rst.txt"

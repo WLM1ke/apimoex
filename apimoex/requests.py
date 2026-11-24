@@ -7,10 +7,20 @@
 
 from typing import TYPE_CHECKING
 
-from apimoex import client
+from apimoex.client import ISSClient, ISSTableNotFoundError
 
 if TYPE_CHECKING:
     import requests
+
+    from apimoex.types import (
+        BoardTable,
+        EngineTable,
+        Interval,
+        ReferencePlaceholder,
+        Table,
+        TablesDict,
+        WebQuery,
+    )
 
 __all__ = [
     "find_securities",
@@ -33,13 +43,13 @@ __all__ = [
 def _make_query(
     *,
     q: str | None = None,
-    interval: int | None = None,
+    interval: Interval | None = None,
     start: str | None = None,
     end: str | None = None,
     date: str | None = None,
     table: str | None = None,
     columns: tuple[str, ...] | None = None,
-) -> client.WebQuery:
+) -> WebQuery:
     """Формирует дополнительные параметры запроса к MOEX ISS.
 
     В случае None значений не добавляются в запрос.
@@ -62,7 +72,7 @@ def _make_query(
     :return:
         Словарь с дополнительными параметрами запроса.
     """
-    query: client.WebQuery = {}
+    query: WebQuery = {}
     if q:
         query["q"] = q
     if interval:
@@ -81,20 +91,20 @@ def _make_query(
     return query
 
 
-def _get_table(data: client.TablesDict, table: str) -> client.Table:
+def _get_table(data: TablesDict, table: str) -> Table:
     """Извлекает конкретную таблицу из данных."""
     try:
         return data[table]
     except KeyError as err:
-        raise client.ISSMoexError(f"Отсутствует таблица {table} в данных") from err
+        raise ISSTableNotFoundError(table) from err
 
 
 def _get_short_data(
     session: requests.Session,
     url: str,
     table: str,
-    query: client.WebQuery | None = None,
-) -> client.Table:
+    query: WebQuery | None = None,
+) -> Table:
     """Получить данные для запроса с выдачей всей информации за раз.
 
     :param session:
@@ -109,7 +119,7 @@ def _get_short_data(
     :return:
         Конкретная таблица из запроса.
     """
-    iss = client.ISSClient(session, url, query)
+    iss = ISSClient(session, url, query)
     data = iss.get()
 
     return _get_table(data, table)
@@ -119,8 +129,8 @@ def _get_long_data(
     session: requests.Session,
     url: str,
     table: str,
-    query: client.WebQuery | None = None,
-) -> client.Table:
+    query: WebQuery | None = None,
+) -> Table:
     """Получить данные для запроса, в котором информация выдается несколькими блоками.
 
     :param session:
@@ -135,13 +145,13 @@ def _get_long_data(
     :return:
         Конкретная таблица из запроса.
     """
-    iss = client.ISSClient(session, url, query)
+    iss = ISSClient(session, url, query)
     data = iss.get_all()
 
     return _get_table(data, table)
 
 
-def get_reference(session: requests.Session, placeholder: str = "boards") -> list[dict[str, str | int | float]]:
+def get_reference(session: requests.Session, placeholder: ReferencePlaceholder = "boards") -> Table:
     """Получить перечень доступных значений плейсхолдера в адресе запроса.
 
     Например в описание запроса https://iss.moex.com/iss/reference/32 присутствует следующий адрес
@@ -167,7 +177,7 @@ def find_securities(
     session: requests.Session,
     string: str,
     columns: tuple[str, ...] | None = ("secid", "regnumber"),
-) -> client.Table:
+) -> Table:
     """Найти инструменты по части Кода, Названию, ISIN, Идентификатору Эмитента, Номеру гос.регистрации.
 
     Один из вариантов использования - по регистрационному номеру узнать предыдущие тикеры эмитента, и с помощью
@@ -197,7 +207,7 @@ def find_security_description(
     session: requests.Session,
     security: str,
     columns: tuple[str, ...] | None = ("name", "title", "value"),
-) -> client.Table:
+) -> Table:
     """Получить спецификацию инструмента.
 
     Один из вариантов использования - по тикеру узнать дату начала торгов.
@@ -227,7 +237,7 @@ def get_market_candle_borders(
     security: str,
     market: str = "shares",
     engine: str = "stock",
-) -> client.Table:
+) -> Table:
     """Получить таблицу интервалов доступных дат для свечей различного размера на рынке для всех режимов торгов.
 
     Описание запроса - https://iss.moex.com/iss/reference/156
@@ -256,7 +266,7 @@ def get_board_candle_borders(
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
-) -> client.Table:
+) -> Table:
     """Получить таблицу интервалов доступных дат для свечей различного размера в указанном режиме торгов.
 
     Описание запроса - https://iss.moex.com/iss/reference/48
@@ -287,7 +297,7 @@ def get_board_candle_borders(
 def get_market_candles(
     session: requests.Session,
     security: str,
-    interval: int = 24,
+    interval: Interval = 24,
     start: str | None = None,
     end: str | None = None,
     columns: tuple[str, ...] | None = (
@@ -301,7 +311,7 @@ def get_market_candles(
     ),
     market: str = "shares",
     engine: str = "stock",
-) -> client.Table:
+) -> Table:
     """Получить свечи в формате HLOCV указанного инструмента на рынке для основного режима торгов за интервал дат.
 
     Если торговля идет в нескольких основных режимах, то на один интервал времени может быть выдано несколько свечек -
@@ -343,7 +353,7 @@ def get_market_candles(
 def get_board_candles(
     session: requests.Session,
     security: str,
-    interval: int = 24,
+    interval: Interval = 24,
     start: str | None = None,
     end: str | None = None,
     columns: tuple[str, ...] | None = (
@@ -358,7 +368,7 @@ def get_board_candles(
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
-) -> client.Table:
+) -> Table:
     """Получить свечи в формате HLOCV указанного инструмента в указанном режиме торгов за интервал дат.
 
     Описание запроса - https://iss.moex.com/iss/reference/46
@@ -402,7 +412,7 @@ def get_board_dates(
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
-) -> client.Table:
+) -> Table:
     """Получить интервал дат, доступных в истории для рынка по заданному режиму торгов.
 
     Описание запроса - https://iss.moex.com/iss/reference/26
@@ -427,12 +437,12 @@ def get_board_dates(
 
 def get_board_securities(
     session: requests.Session,
-    table: str = "securities",
+    table: BoardTable = "securities",
     columns: tuple[str, ...] | None = ("SECID", "REGNUMBER", "LOTSIZE", "SHORTNAME"),
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
-) -> client.Table:
+) -> Table:
     """Получить таблицу инструментов по режиму торгов со вспомогательной информацией.
 
     Описание запроса - https://iss.moex.com/iss/reference/32
@@ -475,7 +485,7 @@ def get_market_history(
     ),
     market: str = "shares",
     engine: str = "stock",
-) -> client.Table:
+) -> Table:
     """Получить историю по одной бумаге на рынке для всех режимов торгов за интервал дат.
 
     На одну дату может приходиться несколько значений, если торги шли в нескольких режимах.
@@ -523,7 +533,7 @@ def get_board_history(
     board: str = "TQBR",
     market: str = "shares",
     engine: str = "stock",
-) -> client.Table:
+) -> Table:
     """Получить историю торгов для указанной бумаги в указанном режиме торгов за указанный интервал дат.
 
     Описание запроса - https://iss.moex.com/iss/reference/65
@@ -570,7 +580,7 @@ def get_index_tickers(
     ),
     market: str = "index",
     engine: str = "stock",
-) -> client.Table:
+) -> Table:
     """Получить информацию по составу указанного индекса за указанную дату.
 
     Описание запроса - https://iss.moex.com/iss/reference/148
@@ -603,7 +613,7 @@ def get_index_tickers(
     return _get_short_data(session, url, table, query)
 
 
-def get_engines(session: requests.Session) -> client.Table:
+def get_engines(session: requests.Session) -> Table:
     """Получить перечень доступных торговых систем (движков) MOEX.
 
     Например: https://iss.moex.com/iss/engines.json — stock, futures, currency и т.д.
@@ -625,8 +635,8 @@ def get_engines(session: requests.Session) -> client.Table:
 def get_engine(
     session: requests.Session,
     engine: str = "stock",
-    table: str = "dailytable",
-) -> client.Table:
+    table: EngineTable = "dailytable",
+) -> Table:
     """Получить описание и режим работы торговой системы (движка).
 
     Например: https://iss.moex.com/iss/engines/stock.json — содержит три таблицы:

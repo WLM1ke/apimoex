@@ -1,28 +1,35 @@
 """Тесты для разнообразных запросов."""
 
+from pathlib import Path
+from typing import TYPE_CHECKING
+
 import pandas as pd
 import pytest
 from requests import Session
 
 from apimoex import client, requests
 
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+_CA_BUNDLE = Path(__file__).parent / "certs" / "russian_trusted_root_ca.pem"
+
 
 @pytest.fixture(scope="module", name="session")
-def make_session():
-    """Создание http сессии."""
+def make_session() -> Iterator[Session]:
+    """Создание http сессии с корневым сертификатом MOEX."""
     with Session() as session:
+        session.verify = str(_CA_BUNDLE)
         yield session
 
 
-def test_make_query_empty():
-    # noinspection PyProtectedMember
-    query = requests._make_query()
+def test_make_query_empty() -> None:
+    query = requests._make_query()  # pyright: ignore[reportPrivateUsage]
     assert query == {}
 
 
-def test_make_query_full():
-    # noinspection PyProtectedMember
-    query = requests._make_query(
+def test_make_query_full() -> None:
+    query = requests._make_query(  # pyright: ignore[reportPrivateUsage]
         q="GAZP",
         interval=60,
         start="2019-10-09",
@@ -40,20 +47,18 @@ def test_make_query_full():
     assert query["new_table.columns"] == "4,a"
 
 
-def test_get_table():
-    # noinspection PyProtectedMember
-    query = requests._get_table({"a": "b"}, "a")
-    assert query == "b"
+def test_get_table() -> None:
+    table = requests._get_table({"a": [{"b": "c"}]}, "a")  # pyright: ignore[reportPrivateUsage]
+    assert table == [{"b": "c"}]
 
 
-def test_get_table_notable():
-    with pytest.raises(client.ISSMoexError) as error:
-        # noinspection PyProtectedMember
-        requests._get_table({"a": "b"}, "b")
-    assert "Отсутствует таблица b в данных" in str(error.value)
+def test_get_table_notable() -> None:
+    with pytest.raises(client.ISSTableNotFoundError) as error:
+        _ = requests._get_table({"a": []}, "b")  # pyright: ignore[reportPrivateUsage]
+    assert "Table b is missing in the response" in str(error.value)
 
 
-def test_get_reference(session):
+def test_get_reference(session: Session) -> None:
     data = requests.get_reference(session, "engines")
     assert isinstance(data, list)
     assert len(data) >= 10
@@ -68,19 +73,19 @@ check_points = [
 
 
 @pytest.mark.parametrize(("reg_number", "expected"), check_points)
-def test_find_securities(session, reg_number, expected):
+def test_find_securities(session: Session, reg_number: str, expected: set[str]) -> None:
     data = requests.find_securities(session, reg_number)
     assert isinstance(data, list)
     assert expected == {row["secid"] for row in data if row["regnumber"] == reg_number}
 
 
-def test_find_security_description(session):
+def test_find_security_description(session: Session) -> None:
     data = requests.find_security_description(session, "IRAO")
     assert isinstance(data, list)
     assert len(data) >= 19
 
 
-def test_get_market_candle_borders(session):
+def test_get_market_candle_borders(session: Session) -> None:
     data = requests.get_market_candle_borders(session, "SNGSP")
     assert isinstance(data, list)
     assert len(data) == 7
@@ -97,7 +102,7 @@ def test_get_market_candle_borders(session):
     ]
 
 
-def test_get_board_candle_borders(session):
+def test_get_board_candle_borders(session: Session) -> None:
     data = requests.get_board_candle_borders(session, "UPRO")
     assert isinstance(data, list)
     assert len(data) == 7
@@ -114,7 +119,7 @@ def test_get_board_candle_borders(session):
     ]
 
 
-def test_get_market_candles_from_beginning(session):
+def test_get_market_candles_from_beginning(session: Session) -> None:
     data = requests.get_market_candles(session, "RTKM", interval=1, end="2011-12-16")
     assert isinstance(data, list)
     assert len(data) > 500
@@ -128,7 +133,7 @@ def test_get_market_candles_from_beginning(session):
     assert df.loc[6, "begin"] == "2011-12-15 10:06:00"
 
 
-def test_get_market_candles_to_end(session):
+def test_get_market_candles_to_end(session: Session) -> None:
     data = requests.get_market_candles(session, "LSRG", interval=24, start="2020-08-20")
     assert isinstance(data, list)
     assert len(data) > 13
@@ -141,13 +146,13 @@ def test_get_market_candles_to_end(session):
     assert data[6]["begin"] == "2020-08-28 00:00:00"
 
 
-def test_get_market_candles_empty_history(session):
+def test_get_market_candles_empty_history(session: Session) -> None:
     data = requests.get_market_candles(session, "KSGR", interval=24)
     assert isinstance(data, list)
     assert len(data) == 0
 
 
-def test_get_board_candles_from_beginning(session):
+def test_get_board_candles_from_beginning(session: Session) -> None:
     data = requests.get_board_candles(session, "MTSS", interval=10, end="2011-12-22")
     assert isinstance(data, list)
     assert len(data) > 500
@@ -161,7 +166,7 @@ def test_get_board_candles_from_beginning(session):
     assert df.loc[6, "begin"] == "2011-12-08 11:00:00"
 
 
-def test_get_board_candles_to_end(session):
+def test_get_board_candles_to_end(session: Session) -> None:
     data = requests.get_board_candles(session, "TTLK", interval=31, start="2014-07-01")
     assert isinstance(data, list)
     assert len(data) > 52
@@ -175,7 +180,7 @@ def test_get_board_candles_to_end(session):
     assert df.loc[6, "begin"] == "2015-01-01 00:00:00"
 
 
-def test_get_board_dates(session):
+def test_get_board_dates(session: Session) -> None:
     data = requests.get_board_dates(session)
     assert isinstance(data, list)
     assert len(data) == 1
@@ -185,7 +190,7 @@ def test_get_board_dates(session):
     assert len(data[0]["till"]) == 10
 
 
-def test_get_board_securities(session):
+def test_get_board_securities(session: Session) -> None:
     data = requests.get_board_securities(session)
     assert isinstance(data, list)
     assert len(data) > 200
@@ -199,7 +204,7 @@ def test_get_board_securities(session):
     assert df.loc["MRSB", "LOTSIZE"] == 10000
 
 
-def test_get_market_history_from_beginning(session):
+def test_get_market_history_from_beginning(session: Session) -> None:
     data = requests.get_market_history(session, "AKRN", end="2006-12-01")
     assert isinstance(data, list)
     assert data[0]["TRADEDATE"] == "2006-10-11"
@@ -209,15 +214,17 @@ def test_get_market_history_from_beginning(session):
     assert "VOLUME" in data[3]
 
 
-def test_get_market_history_to_end(session):
+def test_get_market_history_to_end(session: Session) -> None:
     data = requests.get_market_history(session, "MOEX", start="2017-10-02")
     assert isinstance(data, list)
     assert len(data) > 100
     assert data[0]["TRADEDATE"] == "2017-10-02"
-    assert data[-1]["TRADEDATE"] >= "2018-11-19"
+    last_date = data[-1]["TRADEDATE"]
+    assert isinstance(last_date, str)
+    assert last_date >= "2018-11-19"
 
 
-def test_get_board_history_from_beginning(session):
+def test_get_board_history_from_beginning(session: Session) -> None:
     data = requests.get_board_history(session, "LSNGP", end="2014-08-01")
     df = pd.DataFrame(data)
     df = df.set_index("TRADEDATE")
@@ -227,7 +234,7 @@ def test_get_board_history_from_beginning(session):
     assert df.loc["2014-08-01", "VOLUME"] == 4000
 
 
-def test_get_board_history_to_end(session):
+def test_get_board_history_to_end(session: Session) -> None:
     data = requests.get_board_history(session, "LSRG", start="2018-08-07")
     df = pd.DataFrame(data)
     df = df.set_index("TRADEDATE")
@@ -242,7 +249,7 @@ def test_get_board_history_to_end(session):
     assert df.loc["2018-08-28", "VOLUME"] == 47428
 
 
-def test_get_index_tickers(session):
+def test_get_index_tickers(session: Session) -> None:
     data = requests.get_index_tickers(session, index="IMOEX", date="2023-03-03")
     assert len(data) == 40
     assert data[15]["ticker"] == "MAGN"
@@ -250,7 +257,7 @@ def test_get_index_tickers(session):
     assert data[35]["tradingsession"] == 3
 
 
-def test_get_engines(session):
+def test_get_engines(session: Session) -> None:
     data = requests.get_engines(session)
     assert isinstance(data, list)
     assert len(data) >= 10
@@ -260,7 +267,7 @@ def test_get_engines(session):
     assert "futures" in df.index
 
 
-def test_get_engine_dailytable(session):
+def test_get_engine_dailytable(session: Session) -> None:
     # по умолчанию dailytable — календарь исключений (выходные/праздники/переносы)
     data = requests.get_engine(session, "stock")
     assert isinstance(data, list)
@@ -273,7 +280,7 @@ def test_get_engine_dailytable(session):
     assert df.loc["2021-02-20", "is_work_day"] == 1  # суббота-отработка — рабочий
 
 
-def test_get_engine_timetable(session):
+def test_get_engine_timetable(session: Session) -> None:
     data = requests.get_engine(session, "stock", "timetable")
     assert isinstance(data, list)
     assert len(data) == 7  # 7 дней недели
@@ -281,7 +288,7 @@ def test_get_engine_timetable(session):
     assert set(df.columns) >= {"is_work_day", "start_time", "stop_time"}
 
 
-def test_get_engine_description(session):
+def test_get_engine_description(session: Session) -> None:
     data = requests.get_engine(session, "stock", "engine")
     assert isinstance(data, list)
     assert len(data) == 1

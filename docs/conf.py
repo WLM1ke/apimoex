@@ -1,34 +1,27 @@
-import os
-import re
 import sys
+import tomllib
+from pathlib import Path
 
 _package_name = "apimoex"
 
-_route_path = os.path.abspath("../")
-sys.path.insert(0, _route_path)
-_version_path = os.path.abspath(os.path.join(_route_path, "pyproject.toml"))
-with open(_version_path) as file:
-    try:
-        _version_info = re.search(
-            r"^version = \"" r"(?P<major>\d+)" r"\.(?P<minor>\d+)" r"\.(?P<patch>\d+)\"$",
-            file.read(),
-            re.MULTILINE,
-        ).groupdict()
-    except IndexError:
-        raise RuntimeError("Unable to determine version.")
+_route_path = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(_route_path))
+with (_route_path / "pyproject.toml").open("rb") as file:
+    _version = tomllib.load(file)["project"]["version"]
 
-version = "{major}.{minor}".format(**_version_info)
-release = "{major}.{minor}.{patch}".format(**_version_info)
+version = ".".join(_version.split(".")[:2])
+release = _version
 
 extensions = ["sphinx.ext.autodoc", "sphinx.ext.githubpages"]
 autodoc_member_order = "bysource"
+toc_object_entries = False
 templates_path = ["templates"]
 html_static_path = []
 
 source_suffix = ".rst"
 master_doc = "index"
 project = _package_name
-copyright = "2019, Mikhail Korotkov aka WLMike"
+copyright = "2019-2026, Mikhail Korotkov aka WLMike"
 author = "Mikhail Korotkov aka WLMike"
 language = "ru"
 exclude_patterns = ["build"]

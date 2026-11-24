@@ -1,5 +1,6 @@
 Начало работы
 =============
+
 Установка
 ---------
 
@@ -20,7 +21,7 @@
    with requests.Session() as session:
        data = apimoex.get_board_history(session, 'SNGSP')
        df = pd.DataFrame(data)
-       df.set_index('TRADEDATE', inplace=True)
+       df = df.set_index('TRADEDATE')
        print(df.head(), '\n')
        print(df.tail(), '\n')
        df.info()
@@ -73,7 +74,7 @@
        iss = apimoex.ISSClient(session, request_url, arguments)
        data = iss.get()
        df = pd.DataFrame(data['securities'])
-       df.set_index('SECID', inplace=True)
+       df = df.set_index('SECID')
        print(df.head(), '\n')
        print(df.tail(), '\n')
        df.info()
